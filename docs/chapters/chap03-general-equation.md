@@ -28,6 +28,8 @@ $\langle \alpha, v\rangle$（$\alpha\in T_x^*\mathcal M,\ v\in T_x\mathcal M$）
 
 関連用語は [Glossary](../glossary) も参照。
 
+（用語の補足）本書の「反対称」は、内積がある場合の単なる反対称行列というより、双対積に関する **skew-adjoint（反自己随伴）**を意味する。
+
 ### Proposition (general form)
 
 本書で扱う一般形は次である：

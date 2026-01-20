@@ -94,6 +94,8 @@ $$
 
 が成り立つ（反対称性より $\langle d\mathcal F, J\,d\mathcal F\rangle=0$）。
 
+（用語の補足）**Lyapunov 関数**とは、軌道に沿って単調に減少（または増加）する量のこと。この節では $\mathcal F$ 自身が（散逸がある限り）Lyapunov 関数になる。
+
 有限次元ユークリッド空間で $d\mathcal F\simeq\nabla\mathcal F$、かつ $K=G^{-1}$ と書ける場合は
 
 $$

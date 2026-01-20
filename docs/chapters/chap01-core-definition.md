@@ -19,6 +19,7 @@ title: "Chapter 1: Core Definition"
 本書は「多様体／関数空間」を扱うため、**一次変分は基本的に共ベクトル**として表す。
 以後の章では、次を本書の規約として用いる：
 
+- **共ベクトル（covector）**: 「ベクトルを入れると数を返す線形な写像」。接空間 $T_x\mathcal M$ に対し、その双対空間 $T_x^*\mathcal M$ の元が共ベクトルである。
 - **微分（一次変分）**: $d\mathcal F(x)\in T_x^*\mathcal M$。双対積 $\langle\cdot,\cdot\rangle$ により
   $\delta \mathcal F(x)[v]=\langle d\mathcal F(x),v\rangle$ と書く。
 - **$G$-勾配**: $\mathrm{grad}_G\mathcal F(x)\in T_x\mathcal M$（$d\mathcal F$ を計量で同一視した“ベクトル”）。
@@ -59,7 +60,7 @@ $$
 停留点近傍の力学を決めるのは二次変分（second variation）である。
 有限次元では Hessian $\nabla^2\mathcal F(x)$、関数空間では線形化作用素（弱形式を含む）として現れる。
 
-## 1.3 Remark
+## 1.3 この枠組みが扱うもの（スコープ）
 
 本枠組みが同時に扱う主題は次である。
 
