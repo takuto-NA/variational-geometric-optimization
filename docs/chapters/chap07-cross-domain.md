@@ -16,10 +16,7 @@ title: "Chapter 7: Cross-domain Table"
 
 ## 7.2 読み方
 
-### Remark
-
-この表は「分野の差異を消去する」ためではなく、
-同一の枠組みの下で差異を可視化するために置く。
+この表は「分野の差異を消去する」ためではなく、同一の枠組みの下で差異を可視化するために置く（見取り図）。
 
 - 同じ「汎関数」でも、空間が違えば変分の意味が変わる
 - 同じ「停留点」でも、散逸なら収束し、保存なら回る
@@ -46,14 +43,11 @@ title: "Chapter 7: Cross-domain Table"
 | $J$ | 反対称構造 | シンプレクティック（Hamilton）、複素構造、Poisson |
 | $C(x)=0$ | 制約 | 境界条件・正規化・PDE/ODE 制約・ゲージ条件 |
 
-### Remark (one line that connects domains)
-
-統一式（Chapter 3）は
+統一式（Chapter 3）は次の 1 行に集約できる：
 
 $$
 \dot x
 =
--G^{-1}(x)\nabla\mathcal F(x) + J(x)\nabla\mathcal F(x)
 -K(x)\,d\mathcal F(x) + J(x)\,d\mathcal F(x)
 $$
 
@@ -116,8 +110,6 @@ $$
 減衰振動の最小例は [Chapter 4](./chap04-stationary-points) の 2D damped rotation も参照。
 
 ## 7.5 応用ページへ落とすときの最短手順
-
-### Remark (implementation-oriented checklist)
 
 分野が違っても、実装でやることはほぼ同じである（Chapter 8 と接続）：
 

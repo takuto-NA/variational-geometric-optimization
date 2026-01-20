@@ -28,11 +28,8 @@ $$
 - 自由エネルギー
 - 尤度（負対数）
 
-### Remark
-
 汎関数はスカラー値を返すが、対象 $\mathcal M$ は有限次元ベクトル空間に限らず、
-多様体や関数空間である場合が多い。
-この場合、微分は変分（一次・二次）として自然に定式化される。
+多様体や関数空間である場合が多い。この場合、微分は変分（一次・二次）として自然に定式化される。
 
 ### 2.1.3 幾何構造
 
@@ -42,10 +39,7 @@ $$
 - Hessian
 - Fisher 情報
 
-### Remark (metric and gradient)
-
-計量は勾配の定義を規定する。
-同じ一次変分（線形汎関数）から **どのベクトルを勾配と対応づけるか**は計量に依存する。
+計量は勾配の定義を規定する。同じ一次変分（線形汎関数）から **どのベクトルを勾配と対応づけるか**は計量に依存する。
 この対応は Riesz 表現（Riesz 写像）として理解できる。
 
 #### 反対称構造（回転）
@@ -53,10 +47,7 @@ $$
 - シンプレクティック構造
 - 複素構造（虚数）
 
-### Remark (antisymmetric structure)
-
-反対称構造は保存的な回転成分を与える。
-代表例はシンプレクティック構造（Poisson 構造）であり、Hamilton 系の基盤をなす。
+反対称構造は保存的な回転成分を与える。代表例はシンプレクティック構造（Poisson 構造）であり、Hamilton 系の基盤をなす。
 
 ### 2.1.4 数値的流れ／条件
 
@@ -65,11 +56,8 @@ $$
 - Hamilton 流
 - 混合流
 
-### Remark
-
-この 4 つは、同じ $\mathcal F$ を与えたときに、
-選択した幾何（計量・反対称構造）に応じて異なる時間発展を得る分類である。
-以降の章では、この分類が統一式の中でどのように現れるかを述べる。
+この 4 つは、同じ $\mathcal F$ を与えたときに、選択した幾何（計量・反対称構造）に応じて
+異なる時間発展（あるいは条件式）を得る分類である。以降の章では、この分類が統一式の中でどのように現れるかを述べる。
 
 ## 2.2 一次変分（differential / first variation）
 
@@ -84,8 +72,6 @@ $$
 $$
 
 と書く（$\mathrm{Exp}_x$ は多様体の指数写像。$\mathcal M=\mathbb R^n$ なら $\mathrm{Exp}_x(\epsilon\eta)=x+\epsilon\eta$）。
-
-### Remark (covector)
 
 $\delta \mathcal F(x)[\cdot]$ は **方向に線形**な写像であり、幾何学的には
 $T_x\mathcal M$ 上の線形汎関数、すなわち **共ベクトル（1-form）**である。
@@ -165,8 +151,6 @@ $$
 
 と書ける（有限次元なら $H_x$ は Hessian 行列に対応する）。
 
-### Remark (indefinite Hessian)
-
 停留点は極小点に限らないため、$H_x$ は一般に不定（indefinite）であり得る。
 その場合 Newton 更新は下降方向にならず、安定化（ダンピング、信頼領域、正則化）が必要になる。
 
@@ -194,8 +178,6 @@ $$
 である（Chapter 4）。有限次元ユークリッド空間では $d\mathcal F\simeq\nabla\mathcal F$ と同一視できるため、これは $\nabla\mathcal F(x^*)=0$ と書ける。
 これは「流れが止まる点」であり、$K,J$（したがって $G$）の選択に依らない。
 
-### Remark (what you must implement)
-
 どの分野でも、最小限に必要なのは次である：
 
 - **一次変分**（または $\nabla\mathcal F$ の計算）
@@ -203,8 +185,6 @@ $$
 - Newton をやるなら **二次変分（線形化）**または Hessian-vector 積
 
 ## 2.6 離散化：連続と実装をつなぐ
-
-### Remark (metric becomes a matrix)
 
 関数空間を離散化すると、計量は典型的に
 
@@ -249,8 +229,6 @@ $$
 $\nabla \mathcal F(x^*) + (DC(x^*))^\top \lambda^* = 0$ を意味する。
 実装上は、$C$ の評価とヤコビアン（線形化）$DC(x)$ が追加で必要になる。
 
-### Remark (saddle points)
-
 制約を入れた停留点は一般にサドルであり、単純な「下降」だけでは扱えない。
 以降（Chapter 6）では、この点を停留構造として統一的に扱う。
 
@@ -265,8 +243,6 @@ $\nabla \mathcal F(x^*) + (DC(x^*))^\top \lambda^* = 0$ を意味する。
 - **(Optional) Structure**: $J(x)$ の適用（反対称性が壊れない実装）
 - **(Optional) Second variation**: Hessian / Hessian-vector 積（Newton, 安定化）
 - **Stopping**: $\|\nabla\mathcal F(x)\|_{G^{-1}}$ や残差など、空間に適した停止規準
-
-### Remark (common failure modes)
 
 - 「$\nabla\mathcal F$ と $\operatorname{grad}_G\mathcal F$ の取り違え」により収束性が崩れる
 - $G$ の逆適用が不安定（境界条件、特異行列、スケーリング）で発散する

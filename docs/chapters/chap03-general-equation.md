@@ -43,8 +43,6 @@ $$
 - $K(x):T_x^*\mathcal M\to T_x\mathcal M$: 対称（通常は半正定）な散逸写像
 - $J(x):T_x^*\mathcal M\to T_x\mathcal M$: 反対称（より正確には skew-adjoint）な保存構造
 
-### Remark (Euclidean coordinate form)
-
 有限次元ユークリッド空間では $d\mathcal F\simeq\nabla\mathcal F$ と同一視できる。
 さらに $K=G^{-1}$（$G$ は SPD 行列）と書ける場合、上の式は
 
@@ -74,8 +72,6 @@ $$
 = -\langle d\mathcal F,K\,d\mathcal F\rangle + \langle d\mathcal F,J\,d\mathcal F\rangle\)。
 反対称性から \(\langle d\mathcal F,J\,d\mathcal F\rangle=0\)、半正定性から \(-\langle d\mathcal F,K\,d\mathcal F\rangle\le 0\)。
 \(\square\)
-
-### Remark (interpretation)
 
 この 1 行は、散逸項と保存項を加法分解して表す。
 与えられた $\mathcal F$ に対し、散逸 $K$（あるいはそれを与える計量 $G$）と $J$ の選択が運動の性質（収束・回転）を規定する。
@@ -133,8 +129,6 @@ $J$ の反対称性により、典型的には $\mathcal F$ が保存量とし�
 
 が同時に現れ、減衰振動のような挙動になります。
 
-### Remark (semi-definite dissipation)
-
 物理・確率のモデルでは、散逸が一部の成分（例：運動量）にだけ作用するため、
 $K$（あるいは $G^{-1}$）が **半正定**（退化あり）になることがある。
 この場合でも上の散逸不等式は成立する（ただし “全成分が必ず減衰する” とは限らない）。
@@ -168,8 +162,6 @@ $$
 
 の形になり、$\mathcal F$ は Lyapunov 関数として単調減少する。
 
-### Remark (why this matters)
-
 「同じ $\mathcal F$ なのに、なぜ系によって収束したり回転したりするか」は、
 **エネルギー勾配 $\nabla\mathcal F$ に作用する演算子の対称部／反対称部**で説明できる。
 この視点は、有限次元・無限次元の両方で共通である。
@@ -178,8 +170,6 @@ $$
 
 同じ $\mathcal F$ が与えられても、
 どの $G$ と $J$ を選ぶかで「降下（散逸）」と「回転（保存）」の割合が変わる。
-
-### Remark (recipe)
 
 モデル（あるいはアルゴリズム）をこの枠に落とす最短手順は次である：
 

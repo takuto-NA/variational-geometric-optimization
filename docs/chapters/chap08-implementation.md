@@ -35,11 +35,9 @@ def step(x):
     return x - eta * g
 ```
 
-### Remark
-
 勾配法・Newton・KKT・Hamilton などの“名前の違い”の背後にある実装上の共通点は、
 **スカラー汎関数 $\mathcal F$ と、それに付随する線形演算（$G^{-1}$ や $J$）**である。
-そのため本章では「何を実装すると、どの方法にも展開できるか」を最小仕様として整理する。
+本章では「何を実装すると、どの方法にも展開できるか」を最小仕様として整理する。
 
 ### 8.1.3 分野横断が自然
 
@@ -56,8 +54,6 @@ def step(x):
 - **Constraints (optional)**: 制約 $C(x)=0$（必要ならラグランジアンへ）
 
 実装では、$G$ や $J$ を「行列として明示」する必要はなく、**ベクトルへの作用（線形演算子）**として提供すれば十分である。
-
-### Remark（“行列を作らない”が基準）
 
 高次元では、密行列の Hessian や KKT 行列を作るよりも、
 
@@ -97,8 +93,6 @@ def hvp(F, x, v):
     return jax.jvp(jax.grad(F), (x,), (v,))[1]
 ```
 
-### Remark（HVP が効く理由）
-
 Newton 系のボトルネックは「線形方程式を解く」部分であり、そこで必要なのは
 **Hessian の全要素ではなく HVP**であることが多い（特に Krylov 法）。
 
@@ -128,8 +122,6 @@ dx = - apply_Ginv(x, g)
 x  = x + eta * dx
 ```
 
-#### Remark（ステップサイズの役割）
-
 勾配流は「流れ」なので、実装では $\eta$（離散化幅）が安定性を支配する。
 まずは一定 $\eta$ で良いが、難しい問題ではラインサーチ/信頼領域へ拡張できる。
 
@@ -152,8 +144,6 @@ Hv(v) = hvp(F, x, v)
 p = solve_linear(Hv, -g)     # e.g. CG / MINRES / GMRES
 x = x + alpha * p            # alpha: line search / damping
 ```
-
-### Remark（難易度・リスクの中心）
 
 Newton 系の実装難易度とリスクは、主に次に集中する：
 
@@ -191,8 +181,6 @@ $$
 - **Discretization**: $x \in \mathcal M$ を $x_h \in \mathbb R^n$ に落とす
 - **Optimization / Stationary computation**: $\mathcal F_h(x_h)$ の停留構造を解く
 
-### Remark（discretize-then-differentiate の実装上の利点）
-
 AD を使う場合、要素ごとのエネルギー（積分近似）から $\mathcal F_h$ を組み立て、
 そのまま `grad` を取る流れ（discretize-then-differentiate）が実装として素直である。
 ただし PDE 制約では、随伴法（制約の構造を使った微分）が効く場面も多い（Chapter 6 の延長）。
@@ -214,8 +202,6 @@ $$
 - **Penalty**: $\mathcal F(x)+\frac{\rho}{2}\|C(x)\|^2$（簡単だが条件数悪化に注意）
 - **Augmented Lagrangian**: 収束性と実装容易性のバランスが良い
 - **Saddle solver**: $(x,\lambda)$ をまとめて Newton/Krylov で解く
-
-### Remark（“最小で強い”のは拡張ラグランジアン）
 
 初版の実装ガイドとしては、汎用性と安定性の観点から
 **Augmented Lagrangian + 反復線形解法**が最も扱いやすい落とし所になることが多い。

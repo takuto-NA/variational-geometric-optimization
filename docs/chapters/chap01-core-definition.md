@@ -16,8 +16,6 @@ title: "Chapter 1: Core Definition"
 本書では「最適化」を狭義の極小化手続きに限定せず、
 停留点の構造を数値的に扱う観点を含めて用いる。
 
-### Remark (notation policy)
-
 本書は「多様体／関数空間」を扱うため、**一次変分は基本的に共ベクトル**として表す。
 以後の章では、次を本書の規約として用いる：
 
@@ -39,8 +37,6 @@ $$
 $$
 
 と書く（$\delta \mathcal F(x)$ は共変ベクトル＝1-形式だと思えばよい）。
-
-### Remark (metric and Riesz)
 
 計量 $G(x)$ は「共変ベクトル（一次変分）を、どのベクトルとして表現するか」を決める。
 すなわち、内積 $\langle\cdot,\cdot\rangle_{G(x)}$ を用いて
@@ -87,13 +83,9 @@ $$
 
 である（完全版は Chapter 3）。ここで $K:T_x^*\mathcal M\to T_x\mathcal M$ は対称（通常は半正定）な散逸写像、$J:T_x^*\mathcal M\to T_x\mathcal M$ は反対称（skew-adjoint）な保存構造である。
 
-### Remark (core view)
-
 - $J=0$ なら散逸（勾配流）で、典型的に $\mathcal F$ は単調減少する。
 - $G=0$ なら保存（Hamilton 型）で、典型的に $\mathcal F$ は保存量として振る舞う。
 - 両方を入れると減衰振動のように「収束」と「回転」が混ざる。
-
-### Remark (Euclidean coordinate form)
 
 ユークリッド空間で $d\mathcal F\simeq \nabla\mathcal F$ と同一視し、さらに $K=G^{-1}$ と書ける場合は
 
