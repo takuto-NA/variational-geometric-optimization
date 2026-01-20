@@ -6,6 +6,7 @@ title: Variational Geometric Optimization
 
 本書は、**汎関数 $\mathcal F$ とその変分構造**を中心に、勾配流・Newton 条件・Hamilton 流・制約（KKT）を同一の地図上で扱うための「理解と実装の共通言語」を提供します。
 
+- **想定読者**: 連続最適化に精通した学部生程度（勾配/Hessian/Newton/KKT の基本は既知）
 - **数式**: KaTeX（`$...$` / `$$...$$`）
 - **デプロイ**: GitHub Actions → GitHub Pages
 

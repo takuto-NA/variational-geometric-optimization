@@ -55,7 +55,11 @@ export default defineConfig({
       {
         text: "Appendix",
         collapsed: true,
-        items: [{ text: "Math (KaTeX samples)", link: "/math" }],
+        items: [
+          { text: "Style Guide", link: "/style" },
+          { text: "Glossary", link: "/glossary" },
+          { text: "Math (KaTeX samples)", link: "/math" },
+        ],
       },
     ],
     socialLinks: [{ icon: "github", link: "https://github.com/" }],

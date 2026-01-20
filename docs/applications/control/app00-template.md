@@ -14,21 +14,21 @@ $$
 
 ## Geometry (G, J)
 
-- $G$:\n
-- $J$:\n
+- $G$:
+- $J$:
 
 ## Discretization
 
-- 時間離散（例：collocation / shooting）\n
-- 空間離散（PDE が絡むなら FEM 等）\n
+- 時間離散（例：collocation / shooting）
+- 空間離散（PDE が絡むなら FEM 等）
 
 ## Algorithm
 
-- 勾配流 / Newton / KKT / Hamilton / 混合 のどれか\n
-- AD（grad/VJP/JVP）で必要量をどう取るか\n
+- 勾配流 / Newton / KKT / Hamilton / 混合 のどれか
+- AD（grad/VJP/JVP）で必要量をどう取るか
 
 ## Notes
 
-- 参照文献\n
-- 実装の落とし穴\n
+- 参照文献
+- 実装の落とし穴
 
