@@ -11,7 +11,11 @@ export default defineConfig({
 
   markdown: {
     config(md) {
-      md.use(katex);
+      md.use(katex, {
+        // 数式が多い docs で「1つの数式ミスでビルド失敗」を避ける
+        throwOnError: false,
+        strict: "warn",
+      });
     },
   },
 
