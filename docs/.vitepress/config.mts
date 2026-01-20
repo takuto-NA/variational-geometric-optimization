@@ -1,5 +1,6 @@
 import { defineConfig } from "vitepress";
-import katex from "markdown-it-katex";
+import texmath from "markdown-it-texmath";
+import katex from "katex";
 
 export default defineConfig({
   lang: "ja",
@@ -11,10 +12,14 @@ export default defineConfig({
 
   markdown: {
     config(md) {
-      md.use(katex, {
-        // 数式が多い docs で「1つの数式ミスでビルド失敗」を避ける
-        throwOnError: false,
-        strict: "warn",
+      md.use(texmath, {
+        engine: katex,
+        delimiters: "dollars",
+        katexOptions: {
+          // 数式が多い docs で「1つの数式ミスでビルド失敗」を避ける
+          throwOnError: false,
+          strict: "warn",
+        },
       });
     },
   },

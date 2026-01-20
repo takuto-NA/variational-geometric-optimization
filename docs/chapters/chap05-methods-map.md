@@ -2,31 +2,132 @@
 title: "Chapter 5: Methods Map"
 ---
 
-## 5.1 勾配流・Newton・Hamilton の位置づけ
+## 5.0 この章の目的（見取り図）
 
-| 分類 | 数式 | 解釈 |
+Chapter 4 で見た通り、本書の中心は **停留条件**
+
+$$
+d\mathcal F(x)=0
+$$
+
+をどう扱うかである（有限次元ユークリッド座標では $\nabla\mathcal F(x)=0$）。
+実際の数値法は「流れ（連続時間）」と「反復（離散時間）」が混ざって見えるので、
+この章では方法を次の 3 軸で整理する：
+
+- **流れの型**：散逸（降下）／保存（回転）／混合（減衰振動）
+- **幾何の選択**：どの \(K,J\)（あるいは計量 \(G\)）で動かすか（Chapter 3）
+- **離散化・解法**：時間離散化か、停留条件の方程式解法か
+
+### Remark (where to look)
+
+- 記法と統一式の意味は [Chapter 3](./chap03-general-equation)。
+- 停留点近傍の線形化（安定/回転の見方）は [Chapter 4](./chap04-stationary-points)。
+- 実装（AD/HVP/線形ソルバ/停止条件）は [Chapter 8](./chap08-implementation)。
+
+## 5.1 勾配流・Hamilton・混合の位置づけ（連続時間）
+
+### Definition (flow types)
+
+Chapter 3 の一般形
+
+$$
+\dot x
+=
+-K(x)\,d\mathcal F(x)
+ + J(x)\,d\mathcal F(x)
+$$
+
+において、以下の 3 類型を区別する：
+
+| 類型 | 数式 | キーワード |
 | --- | --- | --- |
-| 勾配流 | $\dot x = -\nabla \mathcal F$ | 最急降下（熱） |
-| Newton | $\nabla \mathcal F = 0$ | 停留条件（解法としての Newton） |
-| Hamilton | $\dot x = J\nabla \mathcal F$ | 保存・周期 |
-| 混合 | 両方 | 減衰振動 |
+| 勾配流（散逸） | $\dot x = -K\,d\mathcal F$ | 収束を作る |
+| Hamilton（保存） | $\dot x = J\,d\mathcal F$ | 回転・周期 |
+| 混合 | $\dot x = -K\,d\mathcal F + J\,d\mathcal F$ | 減衰振動 |
 
-最適化はこの中の一部であり、中心は停留構造である。
+### Remark
 
-## 5.2 Newton を「流れ」として見る（直感）
+「最適化（極小化）」は停留点のうち **安定なもの（極小点）**を狙う立場だが、
+本書では広義に「停留構造を数値的に扱う」ことを含めて扱う（保存系・サドル点も射程に入る）。
+混合（減衰振動）の最小例は [Chapter 4](./chap04-stationary-points) の 2D damped rotation を参照。
 
-Newton 法は「停留条件を解く」反復ですが、局所的には
+## 5.2 「流れ」から「アルゴリズム」へ：離散化という視点
+
+### Proposition (time discretization)
+
+流れ
+
+$$
+\dot x = v(x)
+$$
+
+は時間刻み \(h>0\) で離散化できる。代表例は：
+
+- **陽的 Euler**：
+
+$$
+x_{k+1}=x_k + h\,v(x_k)
+$$
+
+- **陰的 Euler**：
+
+$$
+x_{k+1}=x_k + h\,v(x_{k+1})
+$$
+
+### Remark
+
+同じ \(v(x)\) でも離散化で安定性・保存性が変わる。
+硬い（stiff）問題や正則化・制約を含む場合、陰的（あるいは分割）離散化が効くことが多い。
+
+## 5.3 Newton を「流れ」として見る（直感）
+
+Newton 法は「停留条件 \(d\mathcal F=0\) を解く」反復だが、有限次元ユークリッド座標では局所的に
 
 $$
 \Delta x = -\left(\nabla^2\mathcal F(x)\right)^{-1}\nabla\mathcal F(x)
 $$
 
-という **$G^{-1}\nabla\mathcal F$ 型**の更新だと見なせる。
-（$G$ を Hessian に選ぶ、という理解。）
+という **\(G^{-1}\nabla\mathcal F\) 型**の更新だと見なせる（\(G=\nabla^2\mathcal F\)）。
 
-## 5.3 制約付き：KKT はサドル点の“地形”
+### Remark
+
+Newton は本質的に **方程式解法**である。Hessian が正定値で、必要に応じて減衰（ステップ調整）を入れると
+降下法としても扱える。
+
+## 5.4 代表的手法の対応表（最小マップ）
+
+| 目的 | 連続時間の見方 | 代表的な離散アルゴリズム（例） |
+| --- | --- | --- |
+| 降下（散逸） | \(\dot x=-K\,d\mathcal F\) | 最急降下（\(G=I\)）、自然勾配（\(G=\) Fisher）、前処理付き勾配、鏡映降下（Mirror Descent） |
+| 停留点（方程式） | \(d\mathcal F=0\) を解く | Newton、準 Newton（BFGS/L-BFGS）、Gauss–Newton（最小二乗）、非線形 CG |
+| 保存（回転） | \(\dot x=J\,d\mathcal F\) | シンプレクティック積分（例：Stormer–Verlet） |
+| 混合（減衰振動） | \(\dot x=-K\,d\mathcal F+J\,d\mathcal F\) | 分割法（splitting）、減衰付き Hamilton（運動量法の連続極限としての見方） |
+
+### Remark (何が「幾何」か)
+
+- \(G\)：距離（内積）を決める。**どの方向を 1 とみなすか**（前処理・自然勾配）に対応する。
+- \(J\)：回転（保存）を作る。**等高線に沿う成分**を足す役割を持つ。
+
+## 5.5（最小）選び方：いつ何を使うか
+
+### Remark (practical checklist)
+
+- **大規模で Hessian が無理**：勾配流系（最急降下、前処理、L-BFGS など）から始める
+- **局所二次近似が効く・中規模**：Newton/準 Newton が有利
+- **正則化・分離構造が強い**：陰的離散化や近接（prox）に寄せると安定しやすい
+- **保存量が重要（物理・力学）**：Hamilton 系＋シンプレクティック離散化
+- **制約が本質**：KKT（Chapter 6）として「サドル点を解く」発想に切り替える
+
+## 5.6 制約付き：KKT はサドル点の“地形”
 
 制約を入れると停留点は一般にサドルになり、
 「極小化」と同様の直観だけでは扱えない。
-一方で Chapter 6 のように **ラグランジアン $\mathcal L$ の停留構造**として統一できる。
+一方で Chapter 6 のように **ラグランジアン \(\mathcal L\) の停留構造**として統一できる。
+
+### Remark
+
+制約付きでは「目的関数を下げる」よりも、
+**停留条件（KKT）を満たす点を探す**方が自然になる。
+この意味で Chapter 6 は、この章の方法マップを制約へ拡張した位置づけである。
 
