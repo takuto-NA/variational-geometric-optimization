@@ -1,5 +1,5 @@
 ---
-title: "第5章　手法マップ"
+title: "第5章 手法マップ"
 ---
 
 > この章で主に触るknob: Algorithm（流れ/反復/ソルバ選択）＋ Discretization（時間離散化・反復法の見方）

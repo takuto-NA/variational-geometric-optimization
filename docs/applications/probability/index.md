@@ -89,6 +89,7 @@ $$
 $$
 x_t^*=\arg\min_{x_t}\ 
 \tfrac12\|y_t-Hx_t\|_{R^{-1}}^2
+\;+\;
 \tfrac12\|x_t-m_{t\mid t-1}\|_{P_{t\mid t-1}^{-1}}^2
 $$
 

@@ -1,0 +1,95 @@
+{
+  "scannedRoot": "C:/Users/owner/Documents/git/variational-geometric-optimization/docs",
+  "excluded": [
+    "docs/.vitepress/dist/**"
+  ],
+  "extensions": [
+    ".cjs",
+    ".js",
+    ".json",
+    ".md",
+    ".mjs",
+    ".mts",
+    ".ts",
+    ".yaml",
+    ".yml"
+  ],
+  "totalFiles": 45,
+  "uniqueExoticCodePoints": 1,
+  "summary": [
+    {
+      "codePoint": "U+3000",
+      "name": "IDEOGRAPHIC_SPACE",
+      "count": 31
+    }
+  ],
+  "topFiles": [
+    {
+      "file": "docs/.vitepress/config.mts",
+      "count": 10
+    },
+    {
+      "file": "docs/index.md",
+      "count": 10
+    },
+    {
+      "file": "docs/chapters/appA-reviewer-playbook.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/appB-part1-structure-audit.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/chap00-preface.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/chap01-core-definition.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/chap02-minimal-ingredients.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/chap03-general-equation.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/chap04-stationary-points.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/chap05-methods-map.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/chap06-constraints.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/chap07-cross-domain.md",
+      "count": 1
+    },
+    {
+      "file": "docs/chapters/chap08-implementation.md",
+      "count": 1
+    }
+  ],
+  "perFile": {
+    "docs/.vitepress/config.mts": 10,
+    "docs/chapters/appA-reviewer-playbook.md": 1,
+    "docs/chapters/appB-part1-structure-audit.md": 1,
+    "docs/chapters/chap00-preface.md": 1,
+    "docs/chapters/chap01-core-definition.md": 1,
+    "docs/chapters/chap02-minimal-ingredients.md": 1,
+    "docs/chapters/chap03-general-equation.md": 1,
+    "docs/chapters/chap04-stationary-points.md": 1,
+    "docs/chapters/chap05-methods-map.md": 1,
+    "docs/chapters/chap06-constraints.md": 1,
+    "docs/chapters/chap07-cross-domain.md": 1,
+    "docs/chapters/chap08-implementation.md": 1,
+    "docs/index.md": 10
+  }
+}

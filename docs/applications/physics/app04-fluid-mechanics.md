@@ -37,12 +37,12 @@ Navier–Stokes の「粘性」は $\mathcal F$ そのものというより、�
 非圧縮は未定乗数（圧力）として
 
 $$
-\dot v = \text{(力学)} - G\,\nabla \mathcal F(v) + \nabla p,
+\dot v = \text{(力学)} - G\,\nabla \mathcal F(v) - \nabla p,
 \qquad
 \nabla\cdot v=0
 $$
 
-の形で入る（$\nabla p$ が制約力）。
+の形で入る（$-\nabla p$ が制約力）。
 
 ## Discretization
 

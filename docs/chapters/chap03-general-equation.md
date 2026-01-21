@@ -1,5 +1,5 @@
 ---
-title: "第3章　統一方程式"
+title: "第3章 統一方程式"
 ---
 
 > この章で主に触るknob: Geometry（散逸 $K$/計量、保存 $J$）＋ Algorithm（流れの型）

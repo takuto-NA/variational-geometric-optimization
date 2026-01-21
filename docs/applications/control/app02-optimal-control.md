@@ -27,20 +27,20 @@ $$
 g(x(t),u(t),t)\le 0,\qquad h(x(T))=0.
 $$
 
-この章では、これを **VGO（変分的幾何最適化）** の「汎関数 + 制約（Chapter 6）」として書き直し、PMP や MPC を同一骨格の上に置く。
+この章では、これを **VGO（変分的幾何最適化）** の「汎関数 + 制約（[第6章](../../chapters/chap06-constraints)）」として書き直し、PMP や MPC を同一骨格の上に置く。
 
 ## Functional（VGO の統一言語）
 
-Chapter 6 の記法で、制約付き汎関数のラグランジアンを
+[第6章](../../chapters/chap06-constraints) の記法で、制約付き汎関数のラグランジアンを
 
 $$
 \mathcal L[x,u,\lambda,\mu,\nu]
 =
 \phi(x(T))+\int_0^T \Big(
 \ell(x,u,t)
-\lambda(t)^\top(\dot x-f(x,u,t))
-\mu(t)^\top h_t(x,u,t)
-\nu(t)^\top g_t(x,u,t)
+- \lambda(t)^\top(\dot x-f(x,u,t))
++ \mu(t)^\top h_t(x,u,t)
++ \nu(t)^\top g_t(x,u,t)
 \Big)\,dt
 $$
 
@@ -58,8 +58,8 @@ $$
 
 VGO の一般形（散逸 + 保存）に対して、最適制御は大きく 2 つの見方を取れる。
 
-- **散逸（最適化）として解く**: 変数 \(\theta=(x,u,\lambda,\dots)\) の上で \(J=0\) として、勾配流・Newton・SQP などで KKT を解く（Chapter 5 の「勾配流/ Newton / KKT」）。
-- **保存（Hamilton）として読む**: ダイナミクス制約の乗数 \(\lambda\) を導入すると、停留条件が \((x,\lambda)\) の Hamilton 系（境界値問題）として現れる（後述の PMP、Chapter 5 の「Hamilton」）。
+- **散逸（最適化）として解く**: 変数 \(\theta=(x,u,\lambda,\dots)\) の上で \(J=0\) として、勾配流・Newton・SQP などで KKT を解く（[第5章](../../chapters/chap05-methods-map) の「勾配流/ Newton / KKT」）。
+- **保存（Hamilton）として読む**: ダイナミクス制約の乗数 \(\lambda\) を導入すると、停留条件が \((x,\lambda)\) の Hamilton 系（境界値問題）として現れる（後述の PMP、[第5章](../../chapters/chap05-methods-map) の「Hamilton」）。
 
 どちらを選ぶかは「何を未知量として持つか」「離散化と実装の都合（AD, 線形ソルバ, 安定性）」で決まる。
 

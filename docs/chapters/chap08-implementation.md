@@ -1,5 +1,5 @@
 ---
-title: "第8章　実装への接続"
+title: "第8章 実装への接続"
 ---
 
 > この章で主に触るknob: Discretization（可計算化）＋ Algorithm（ソルバ/検証/安定化）＋ Geometry（線形作用としての $G^{-1},J$）

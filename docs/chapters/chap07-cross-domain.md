@@ -1,5 +1,5 @@
 ---
-title: "第7章　分野横断表"
+title: "第7章 分野横断表"
 ---
 
 > この章で主に触るknob: Space/Discretization/Geometry/Algorithm を「翻訳キー」として並べ、分野差を見える化する

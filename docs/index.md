@@ -61,16 +61,16 @@ title: 多重線型構造の微積分学
 
 ### 理論編（Part I）
 
-- [第0章　序文](./chapters/chap00-preface)
-- [第1章　問題設定と設計自由度](./chapters/chap01-core-definition)
-- [第2章　停留構造（一次・二次変分）](./chapters/chap02-minimal-ingredients)
-- [第3章　統一方程式](./chapters/chap03-general-equation)
-- [第4章　停留点](./chapters/chap04-stationary-points)
-- [第5章　手法マップ](./chapters/chap05-methods-map)
-- [第6章　制約](./chapters/chap06-constraints)
-- [第7章　分野横断表](./chapters/chap07-cross-domain)
-- [第8章　実装への接続](./chapters/chap08-implementation)
-- [付録A　レビューア対策メモ](./chapters/appA-reviewer-playbook)
+- [第0章 序文](./chapters/chap00-preface)
+- [第1章 問題設定と設計自由度](./chapters/chap01-core-definition)
+- [第2章 停留構造（一次・二次変分）](./chapters/chap02-minimal-ingredients)
+- [第3章 統一方程式](./chapters/chap03-general-equation)
+- [第4章 停留点](./chapters/chap04-stationary-points)
+- [第5章 手法マップ](./chapters/chap05-methods-map)
+- [第6章 制約](./chapters/chap06-constraints)
+- [第7章 分野横断表](./chapters/chap07-cross-domain)
+- [第8章 実装への接続](./chapters/chap08-implementation)
+- [付録A レビューア対策メモ](./chapters/appA-reviewer-playbook)
 
 ### 応用編（Part II）
 

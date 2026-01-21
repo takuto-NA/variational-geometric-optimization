@@ -1,5 +1,5 @@
 ---
-title: "第4章　停留点"
+title: "第4章 停留点"
 ---
 
 > この章で主に触るknob: Algorithm（停留点近傍の読む/分類）＋ Geometry（$K,J$ と局所挙動）
