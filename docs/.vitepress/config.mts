@@ -14,7 +14,8 @@ export default defineConfig({
     config(md) {
       md.use(texmath, {
         engine: katex,
-        delimiters: "dollars",
+        // 応用編では `\(...\)` を多用するため `$...$` と両対応にする
+        delimiters: ["dollars", "brackets"],
         katexOptions: {
           // 数式が多い docs で「1つの数式ミスでビルド失敗」を避ける
           throwOnError: false,

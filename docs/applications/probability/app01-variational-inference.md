@@ -4,15 +4,15 @@ title: "Probability: Variational Inference (Sketch)"
 
 ## Problem
 
-観測 $y$ のもとで潜在変数 $z$ の事後分布 $p(z\\mid y)$ を近似したい。
-近似族 $q_\\theta(z)$（パラメータ $\\theta$）を用意する。
+観測 $y$ のもとで潜在変数 $z$ の事後分布 $p(z\mid y)$ を近似したい。
+近似族 $q_\theta(z)$（パラメータ $\theta$）を用意する。
 
 ## Functional
 
 典型的には ELBO 最大化（あるいは負の ELBO 最小化）として書ける：
 
 $$
-\\mathcal F(\\theta) = -\\mathrm{ELBO}(\\theta)
+\mathcal F(\theta) = -\mathrm{ELBO}(\theta)
 $$
 
 ## Geometry (G, J)
@@ -27,8 +27,8 @@ $$
 
 ## Algorithm
 
-- $\nabla_\\theta \\mathcal F$ を AD で計算して更新する
-- 自然勾配は $G^{-1}\\nabla\\mathcal F$ の選択として統一式に含まれる
+- $\nabla_\theta \mathcal F$ を AD で計算して更新する
+- 自然勾配は $G^{-1}\nabla\mathcal F$ の選択として統一式に含まれる
 
 ## Notes
 
