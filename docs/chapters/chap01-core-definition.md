@@ -1,134 +1,55 @@
 ---
-title: "Chapter 1: Core Definition"
+title: "第1章　問題設定と設計自由度"
 ---
 
-## 1.1 Definition
+## 1.1 問題設定：なぜ「固定座標」を外すのか
 
-### Definition (variational geometric optimization)
+学部レベルの線形代数・微積分学は、有限次元の最適化や力学系を理解する上で十分に強力である。  
+一方で、連続体力学・最適制御・機械学習・確率的推論などの現代的な問題では、勾配・ヘッシアン・線型化・変分が **空間・離散化・座標の違いを超えて繰り返し現れる**。
 
-**変分的幾何最適化（Variational Geometric Optimization; VGO）**とは、次のデータで記述される枠組みを指す。
+この反復出現を「構造」として捉えるには、暗黙に置きがちな **固定された有限次元座標空間**の前提をいったん外し、
+何が不変で、何が選択（設計）なのかを分解しておく必要がある。
 
-- **対象**: 多様体または関数空間 $\mathcal M$
-- **汎関数**: $\mathcal F:\mathcal M\to\mathbb R$
-- **幾何**: 計量 $G$（対称正定値）および反対称構造 $J$（反対称）
-- **目的**: $\mathcal F$ の停留構造（停留点とその近傍の局所力学）を、$G,J$ に基づいて記述・計算する
+## 1.2 設計自由度（knobs）の定義
 
-本書では「最適化」を狭義の極小化手続きに限定せず、
-停留点の構造を数値的に扱う観点を含めて用いる。
+本書では、分野差を「何が違うのか」を見える形で扱うために、まず設計自由度（knobs）を 4 つの箱に分けて固定する：
 
-本書は「多様体／関数空間」を扱うため、**一次変分は基本的に共ベクトル**として表す。
-以後の章では、次を本書の規約として用いる：
+| 箱（knob） | 何を決めるか | 典型例 |
+| --- | --- | --- |
+| **Space** | 変数（状態）$x$ が住む空間 $\mathcal M$ | $\mathbb R^n$、多様体、関数空間、確率分布多様体 |
+| **Discretization** | 連続空間 $\mathcal M$ を計算可能な有限次元部分空間 $\mathcal M_h \subset \mathcal M$ へ落とす方法 | FEM（基底選択）、スペクトル近似、NN パラメタ化、時間離散化 |
+| **Geometry** | 一次変分をどうベクトル化し、保存/散逸をどう作るか | 計量 $G$（Riesz 写像）、散逸 $K$、反対称構造 $J$ |
+| **Algorithm** | 何を解く/回すか（流れ・反復・ソルバ） | 勾配流、Newton-Krylov、制約（KKT）、シンプレクティック積分 |
 
-- **共ベクトル（covector）**: 「ベクトルを入れると数を返す線形な写像」。接空間 $T_x\mathcal M$ に対し、その双対空間 $T_x^*\mathcal M$ の元が共ベクトルである。
-- **微分（一次変分）**: $d\mathcal F(x)\in T_x^*\mathcal M$。双対積 $\langle\cdot,\cdot\rangle$ により
-  $\delta \mathcal F(x)[v]=\langle d\mathcal F(x),v\rangle$ と書く。
-- **$G$-勾配**: $\mathrm{grad}_G\mathcal F(x)\in T_x\mathcal M$（$d\mathcal F$ を計量で同一視した“ベクトル”）。
-- **$\nabla\mathcal F$**: 基本的には **ユークリッド空間 $\mathbb R^n$ の座標表示**でのみ用いる（そこで $d\mathcal F$ と同一視できる）。
+以降の章では、各章が主にどの箱を触るか（どの選択を議論しているか）を明確にしながら進める。
 
-用語の最小定義は [Glossary](../glossary) にまとめる。
+## 1.3 VGO（枠組み）の最小像：停留構造を扱う
 
-## 1.2 変分（一次・二次）と「勾配」の意味
-
-### Definition (first variation)
-
-$x\in\mathcal M$ における一次変分（first variation）を、接ベクトル $v\in T_x\mathcal M$ への線形作用として
+本書の中心は「極小化」そのものではなく、**停留構造**である。  
+空間 $\mathcal M$ と汎関数 $\mathcal F:\mathcal M\to\mathbb R$ が与えられたとき、停留点は（座標表示に依らず）
 
 $$
-\delta \mathcal F(x)[v]
+d\mathcal F(x^*) = 0
 $$
 
-と書く（$\delta \mathcal F(x)$ は共変ベクトル＝1-形式だと思えばよい）。
+で特徴づけられる（ここでの $d\mathcal F$ は一次変分であり、定義は第2章にまとめる）。
 
-計量 $G(x)$ は「共変ベクトル（一次変分）を、どのベクトルとして表現するか」を決める。
-すなわち、内積 $\langle\cdot,\cdot\rangle_{G(x)}$ を用いて
+### Definition (VGO: Variational Geometric Optimization)
 
-$$
-\delta \mathcal F(x)[v] = \langle \mathrm{grad}_G \mathcal F(x),\, v\rangle_{G(x)}
-$$
+**変分的幾何最適化（VGO）** とは、汎関数 $\mathcal F$ の停留構造を次の3要素で記述・計算する統一的視点である：
 
-を満たす $\mathrm{grad}_G\mathcal F(x)\in T_x\mathcal M$ を **（$G$-）勾配**と呼ぶ。
-有限次元ユークリッド空間で座標表示すると、よく見る形
+1. **停留条件**: $d\mathcal F(x^*) = 0$（一次変分がゼロ）
+2. **局所形状**: $H = \nabla^2\mathcal F(x^*)$（二次変分 / Hessian）
+3. **幾何構造**: $K$（散逸）と $J$（保存）の選択
 
-$$
-\mathrm{grad}_G \mathcal F(x) = G(x)^{-1}\,\nabla \mathcal F(x)
-$$
+これらを第3章の統一方程式 $\dot x = (-K + J)\,d\mathcal F$ に組み込むことで、勾配流（収束）・Hamilton 流（保存）・混合（減衰振動）を同一の枠組みで扱える。
 
-として書ける（Chapter 3 の一般式の $G^{-1}\nabla\mathcal F$ がこれ）。
+## 1.4 Part I の役割
 
-### Definition (second variation)
+理論編（Part I）は、この4箱フレームを用いて停留構造を記述・計算するための最小セットである。
+各章の詳細なロードマップは[序文 0.8節](./chap00-preface#_0-8-本書の構成-ロードマップ)を参照されたい。
 
-停留点近傍の力学を決めるのは二次変分（second variation）である。
-有限次元では Hessian $\nabla^2\mathcal F(x)$、関数空間では線形化作用素（弱形式を含む）として現れる。
+## 1.5 Summary
 
-## 1.3 この枠組みが扱うもの（スコープ）
-
-本枠組みが同時に扱う主題は次である。
-
-- **停留点**: 必ずしも極小点に限らない
-- **流れ**: 停留点へ“収束する”場合と、停留点の周りを“回転する”場合を含む
-- **幾何**: 勾配・保存量・安定性が、選択した計量 $G$・構造 $J$ に依存して決まる
-
-## 1.4 統一的な流れ（先取り）
-
-### Proposition (general form; preview)
-
-本書で中心となる一般形は
-
-$$
-\dot x
-=
--K(x)\,d\mathcal F(x)
-\;+\;
-J(x)\,d\mathcal F(x)
-$$
-
-である（完全版は Chapter 3）。ここで $K:T_x^*\mathcal M\to T_x\mathcal M$ は対称（通常は半正定）な散逸写像、$J:T_x^*\mathcal M\to T_x\mathcal M$ は反対称（skew-adjoint）な保存構造である。
-
-- $J=0$ なら散逸（勾配流）で、典型的に $\mathcal F$ は単調減少する。
-- $G=0$ なら保存（Hamilton 型）で、典型的に $\mathcal F$ は保存量として振る舞う。
-- 両方を入れると減衰振動のように「収束」と「回転」が混ざる。
-
-ユークリッド空間で $d\mathcal F\simeq \nabla\mathcal F$ と同一視し、さらに $K=G^{-1}$ と書ける場合は
-
-$$
-\dot x = -G^{-1}(x)\,\nabla\mathcal F(x) + J(x)\,\nabla\mathcal F(x)
-$$
-
-となる。
-
-## 1.5 Example（最小）
-
-### Example (Euclidean space)
-
-$\mathcal M=\mathbb R^n$、$\mathcal F(x)=\frac12\|x\|^2$、$G=I$、$J=0$ とすると
-
-$$
-\dot x = -x
-$$
-
-となり原点へ収束する。
-
-### Example (rotation + dissipation)
-
-$n=2$ で
-
-$$
-J=\begin{pmatrix}0&-1\\1&0\end{pmatrix}
-$$
-
-とすると
-
-$$
-\dot x = -x + Jx
-$$
-
-で、原点に向かって回転しながら収束する（減衰振動の最小モデル）。
-
-## 1.6 Summary
-
-本書の中心的主張は、勾配流・Newton 型条件・Hamilton 型保存流・制約付き（KKT）サドル点構造が、
-同一の汎関数 $\mathcal F$ とその変分（一次・二次）から統一的に記述できる、という点にある。
-
-次章以降で、最小構成要素（[Chapter 2](./chap02-minimal-ingredients)）と統一式（[Chapter 3](./chap03-general-equation)）を明示し、
-停留点近傍の線形化（[Chapter 4](./chap04-stationary-points)）と手法地図（[Chapter 5](./chap05-methods-map)）へ接続する。
-
+- 本書は、固定座標の暗黙前提を外し、分野差を **設計自由度（knobs）**として扱う。
+- 停留構造の定義（一次・二次変分、計量による同一視）は **第2章に集約**し、以降の章は参照で回す。

@@ -1,5 +1,5 @@
 ---
-title: "Appendix A: Reviewer Playbook"
+title: "付録A　レビューア対策メモ"
 ---
 
 ## A.1 査読者タイプA：「それって最適化じゃないですよね？」
@@ -15,7 +15,7 @@ title: "Appendix A: Reviewer Playbook"
 
 **記事中の事前配置**
 
-- Preface で「optimization は拡張的に用いる」と明示する
+- 第0章（序文）で「optimization は拡張的に用いる」と明示する
 - 波動や Hamilton 系の章では「これは最小化ではない」と一文で釘を刺す
 
 ## A.2 査読者タイプB：「既存理論の焼き直しでは？」
@@ -63,6 +63,6 @@ title: "Appendix A: Reviewer Playbook"
 
 **記事中の事前配置**
 
-- Chapter 3 の統一式を“同一視”ではなく“座標系”として提示する
-- 分野別表（Chapter 7）で違い（空間/汎関数/構造）を明確に列挙する
+- 第3章の統一式を“同一視”ではなく“座標系”として提示する
+- 分野別表（第7章）で違い（空間/汎関数/構造）を明確に列挙する
 

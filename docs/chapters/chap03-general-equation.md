@@ -1,184 +1,109 @@
 ---
-title: "Chapter 3: General Equation"
+title: "第3章　統一方程式"
 ---
 
-## 3.1 基本方程式（完全形）
+> **この章で主に触るknob**: Geometry（散逸 $K$/計量、保存 $J$）＋ Algorithm（流れの型）
 
-### Definition (objects)
+## 3.1 基本方程式（Coordinate-Free Formulation）
 
-- 状態: $x\in\mathcal M$（$\mathcal M$ はベクトル空間・多様体・関数空間でもよい）
-- 汎関数: $\mathcal F:\mathcal M\to\mathbb R$
-- 微分（共変な表現）: $d\mathcal F(x)\in T_x^*\mathcal M$
+前章で定義した「一次変分（共ベクトル）」と「幾何構造（双対空間上の作用素）」を用いて、最適化と力学を統一する方程式を導く。
 
-有限次元のユークリッド空間では $d\mathcal F$ を $\nabla\mathcal F$ と同一視できるが、
-一般には **計量による同一視（Riesz 写像）** を介して「勾配」が定まる。
+### 3.1.1 構成要素：双対空間上の作用素
 
-### Definition (pairing and adjointness)
+- **状態**: $x \in \mathcal M$
+- **駆動力**: $d\mathcal F(x) \in T_x^* \mathcal M$ （一次変分・共ベクトル）
 
-以後、$\langle\cdot,\cdot\rangle$ は双対積（共ベクトルとベクトルの自然な組）を表す：
-$\langle \alpha, v\rangle$（$\alpha\in T_x^*\mathcal M,\ v\in T_x\mathcal M$）。
+ここで、共ベクトル $d\mathcal F$ を「速度ベクトル」$\dot x \in T_x \mathcal M$ に変換するために、双対空間から接空間への線形写像 $L: T_x^* \mathcal M \to T_x \mathcal M$ を考える。
+任意の $L$ は、対称部分 $K$ と反対称部分 $J$ に分解できる（$\langle \alpha, L\beta \rangle = \langle \alpha, (-K+J)\beta \rangle$ の意味で）。
 
-このとき $K, J:T_x^*\mathcal M\to T_x\mathcal M$ に対し、
+### Definition (Dissipation and Conservation Operators)
 
-- **$K$ の対称性**: $\langle \alpha, K\beta\rangle = \langle \beta, K\alpha\rangle$
-- **$K$ の半正定性**: $\langle \alpha, K\alpha\rangle \ge 0$
-- **$J$ の反対称性（skew-adjoint）**: $\langle \alpha, J\beta\rangle = -\langle \beta, J\alpha\rangle$
+双対空間上の作用素として次を定義する：
 
-を仮定として用いる（ユークリッド座標ではそれぞれ「対称行列」「PSD」「反対称行列」に対応する）。
+1.  **散逸作用素 (Dissipation)** $K_x : T_x^* \mathcal M \to T_x \mathcal M$
+    *   **Symmetry**: $\langle \alpha, K_x \beta \rangle = \langle \beta, K_x \alpha \rangle$
+    *   **Positivity**: $\langle \alpha, K_x \alpha \rangle \ge 0$ （半正定値）
+    *   典型例：計量の逆写像 $G^{-1}$（またはその一部）
 
-関連用語は [Glossary](../glossary) も参照。
+2.  **保存作用素 (Conservation)** $J_x : T_x^* \mathcal M \to T_x \mathcal M$
+    *   **Skew-symmetry**: $\langle \alpha, J_x \beta \rangle = - \langle \beta, J_x \alpha \rangle$
+    *   典型例：Poisson 構造、シンプレクティック構造の逆
 
-（用語の補足）本書の「反対称」は、内積がある場合の単なる反対称行列というより、双対積に関する **skew-adjoint（反自己随伴）**を意味する。
+### 3.1.2 統一方程式
 
-### Proposition (general form)
-
-本書で扱う一般形は次である：
-
-$$
-\dot x
-=
--\underbrace{K(x)\,d\mathcal F(x)}_{\text{散逸・最適化}}
-\;+\;
-\underbrace{J(x)\,d\mathcal F(x)}_{\text{保存・回転}}
-$$
-
-- $K(x):T_x^*\mathcal M\to T_x\mathcal M$: 対称（通常は半正定）な散逸写像
-- $J(x):T_x^*\mathcal M\to T_x\mathcal M$: 反対称（より正確には skew-adjoint）な保存構造
-
-有限次元ユークリッド空間では $d\mathcal F\simeq\nabla\mathcal F$ と同一視できる。
-さらに $K=G^{-1}$（$G$ は SPD 行列）と書ける場合、上の式は
+これらを用いて、VGO の統一方程式を次のように定式化する：
 
 $$
-\dot x
-=
--G^{-1}(x)\,\nabla \mathcal F(x)
-\;+\;
-J(x)\,\nabla \mathcal F(x)
+\dot x = -K_x(d\mathcal F(x)) + J_x(d\mathcal F(x))
 $$
 
-と座標表示できる（本書ではこの座標表示も頻用するが、意味は座標自由形に還元される）。
+この式は「汎関数の傾き（$d\mathcal F$）」が、幾何構造（$K, J$）というレンズを通して「動き（$\dot x$）」に変換されるプロセスを表している。
 
-### Proposition (energy dissipation)
+*   第一項（$-K d\mathcal F$）はエネルギーを散逸させ、停留点へ向かわせる（最適化）。
+*   第二項（$+J d\mathcal F$）はエネルギーを保存し、等高線上を動かす（力学）。
 
-$\mathcal F$ が $C^1$ 級で $x(t)$ が微分可能、かつ $K$ が（上の意味で）対称半正定、$J$ が反対称（skew-adjoint）であれば、解 $x(t)$ に沿って
+## 3.2 エネルギー散逸則
 
-$$
-\frac{d}{dt}\mathcal F(x(t)) \le 0
-$$
+この形式の最大の利点は、エネルギー収支が代数的に確定することである。
 
-が成り立つ。
+### Proposition (Energy Dissipation)
 
-**Proof (one line)**:
-連鎖律より
-\(\frac{d}{dt}\mathcal F = \langle d\mathcal F,\dot x\rangle
-= -\langle d\mathcal F,K\,d\mathcal F\rangle + \langle d\mathcal F,J\,d\mathcal F\rangle\)。
-反対称性から \(\langle d\mathcal F,J\,d\mathcal F\rangle=0\)、半正定性から \(-\langle d\mathcal F,K\,d\mathcal F\rangle\le 0\)。
-\(\square\)
-
-この 1 行は、散逸項と保存項を加法分解して表す。
-与えられた $\mathcal F$ に対し、散逸 $K$（あるいはそれを与える計量 $G$）と $J$ の選択が運動の性質（収束・回転）を規定する。
-
-- 熱拡散（$J=0$）
-- 自然勾配（$G$ を Fisher とみなす）
-- Hamilton 系（$G=0$）
-- 減衰振動（両方あり）
-
-混合の「回りながら落ちる」最小モデルは [Chapter 4](./chap04-stationary-points) の 2D damped rotation を参照。
-
-## 3.2 代表例（同じ形に落とす）
-
-### 勾配流（gradient flow）
-
-$J=0$ とすると
+$\mathcal F$ の時間変化率は次のように計算される：
 
 $$
-\dot x = -K(x)\,d\mathcal F(x)
+\begin{aligned}
+\frac{d}{dt}\mathcal F(x(t)) 
+&= \langle d\mathcal F(x), \dot x \rangle \quad (\text{Chain rule}) \\
+&= \langle d\mathcal F, -K d\mathcal F + J d\mathcal F \rangle \\
+&= -\underbrace{\langle d\mathcal F, K d\mathcal F \rangle}_{\ge 0} + \underbrace{\langle d\mathcal F, J d\mathcal F \rangle}_{0} \\
+&\le 0
+\end{aligned}
 $$
 
-有限次元ユークリッド空間で $K=G^{-1}$ と書けるなら、これは
-$\dot x=-G^{-1}(x)\nabla\mathcal F(x)$ という前処理付き最急降下（自然勾配を含む）になる。
-関数空間では $K$ が $L^2$ や $H^1$ の内積に対応する Riesz 写像の逆（あるいはその離散化）になり得る。
+*   $J$ の項は反対称性 $\langle \alpha, J \alpha \rangle = 0$ により消える（仕事・散逸をしない）。
+*   $K$ の項のみがエネルギーを減少させる。
 
-同じ汎関数から「停留条件（Poisson）」「勾配流（熱方程式型）」の両方が出る最小例は [Chapter 7](./chap07-cross-domain) を参照。
+したがって、**収束させたいなら $K$ を設計し、振動/保存させたいなら $J$ を設計する** という指針が得られる。
 
-### Example (preconditioned / natural gradient)
+## 3.3 座標表示と具体例
 
-有限次元で $G(x)$ を SPD 行列として選ぶと、更新方向は
+有限次元ユークリッド空間（$\mathcal M \simeq \mathbb R^n$, $T_x \mathcal M \simeq \mathbb R^n$）における行列表示と対応付ける。
+ここでは $d\mathcal F$ を勾配ベクトル $\nabla \mathcal F$ と（標準内積で）同一視して表記する慣習に従う。
 
-$$
-\dot x = -G^{-1}(x)\nabla\mathcal F(x)
-$$
-
-となり、これは「前処理付き最急降下」である。
-確率分布多様体では $G$ を Fisher 情報計量とみなすと自然勾配（natural gradient）になる。
-
-### Hamilton 系（conservative flow）
-
-$G=0$ とすると
+### 3.3.1 行列形式
 
 $$
-\dot x = J(x)\,d\mathcal F(x)
+\dot x = (-K + J) \nabla \mathcal F(x)
 $$
 
-$J$ の反対称性により、典型的には $\mathcal F$ が保存量として振る舞う（時間発展が“回る”）。
+ここで $K, J$ は $n \times n$ 行列であり、$K$ は対称半正定値、$J$ は反対称行列である。
 
-### 混合（散逸＋保存）
+### 3.3.2 代表的な系
 
-両方を入れると
+1.  **最急降下法 (Gradient Descent)**
+    *   $K=I, J=0$
+    *   $\dot x = -\nabla \mathcal F$
 
-- 収束（散逸）
-- 周期（保存）
+2.  **Newton 法 / 自然勾配法**
+    *   $K=G(x)^{-1}$ ($G$ は Hessian や Fisher 行列), $J=0$
+    *   $\dot x = -G^{-1} \nabla \mathcal F$
+    *   これは「計量 $G$ に関する勾配流」に他ならない。
 
-が同時に現れ、減衰振動のような挙動になります。
+3.  **Hamilton 力学**
+    *   $K=0, J = \begin{pmatrix} 0 & I \\ -I & 0 \end{pmatrix}$
+    *   $\dot x = J \nabla \mathcal F$
+    *   エネルギーは保存される（$\frac{d}{dt}\mathcal F = 0$）。
 
-物理・確率のモデルでは、散逸が一部の成分（例：運動量）にだけ作用するため、
-$K$（あるいは $G^{-1}$）が **半正定**（退化あり）になることがある。
-この場合でも上の散逸不等式は成立する（ただし “全成分が必ず減衰する” とは限らない）。
+4.  **混合系（減衰振動）**
+    *   $K \ne 0, J \ne 0$
+    *   エネルギーを減らしながら回る。
 
-## 3.3 どこから来るか（対称・反対称分解）
+## 3.4 まとめ
 
-### Proposition (operator decomposition)
+第2章の定義と合わせると、問題の記述は完全に以下の 3 つの選択に帰着された：
 
-（ユークリッド座標で）ある行列場 $A(x)$ により
+1.  **汎関数 $\mathcal F$**：何を減らしたいか/保存したいか。
+2.  **散逸構造 $K$**：どの計量（Riesz 写像の逆）で降下するか。
+3.  **保存構造 $J$**：どのような回転/振動を許容するか。
 
-$$
-\dot x = A(x)\,\nabla\mathcal F(x)
-$$
-
-と書けるとする。このとき
-
-$$
-A = \underbrace{\frac{A+A^\mathsf T}{2}}_{\text{対称部}}
-\;+\;
-\underbrace{\frac{A-A^\mathsf T}{2}}_{\text{反対称部}}
-$$
-
-と一意に分解できる。
-特に、対称部が $-K$（$K\succeq 0$）として書けるなら、式は
-
-$$
-\dot x = -K(x)\nabla\mathcal F(x) + J(x)\nabla\mathcal F(x)
-$$
-
-（ここではユークリッド座標で $d\mathcal F\simeq\nabla\mathcal F$ と同一視している。）
-
-の形になり、$\mathcal F$ は Lyapunov 関数として単調減少する。
-
-「同じ $\mathcal F$ なのに、なぜ系によって収束したり回転したりするか」は、
-**エネルギー勾配 $\nabla\mathcal F$ に作用する演算子の対称部／反対称部**で説明できる。
-この視点は、有限次元・無限次元の両方で共通である。
-
-## 3.4 コメント（読み方：設計レシピ）
-
-同じ $\mathcal F$ が与えられても、
-どの $G$ と $J$ を選ぶかで「降下（散逸）」と「回転（保存）」の割合が変わる。
-
-モデル（あるいはアルゴリズム）をこの枠に落とす最短手順は次である：
-
-- **Functional**: まず $\mathcal F$（エネルギー／損失／自由エネルギー）を特定する
-- **State space**: $x$ がどの空間に住むか（座標・制約・関数空間）を明確にする
-- **Geometry**: $d\mathcal F$ をどの計量でベクトル化するか（$G$／Riesz 写像）を読む
-- **Split**: 右辺を「散逸（対称）」＋「保存（反対称）」に分解する
-
-次章では、この一般式の停留点 \(d\mathcal F(x^*)=0\) の近傍で何が起こるかを最小限の線形化で見る（ユークリッド座標では $\nabla\mathcal F(x^*)=0$）。
-
+次章では、この方程式の停留点（$\dot x = 0$ となる点）近傍での挙動を解析する。

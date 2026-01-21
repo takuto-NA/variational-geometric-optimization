@@ -4,8 +4,8 @@ import katex from "katex";
 
 export default defineConfig({
   lang: "ja",
-  title: "Variational Geometric Optimization",
-  description: "ドキュメント（VitePress）",
+  title: "多重線型構造の微積分学",
+  description: "変分的幾何最適化の統一枠組みと実装への道",
 
   // GitHub Pages 用: Actions から BASE_URL を注入（例: /repo-name/）
   base: process.env.BASE_URL || "/",
@@ -26,44 +26,44 @@ export default defineConfig({
 
   themeConfig: {
     nav: [
-      { text: "Home", link: "/" },
-      { text: "Part I", link: "/chapters/chap00-preface" },
-      { text: "Part II", link: "/applications/control/" },
+      { text: "ホーム", link: "/" },
+      { text: "理論編", link: "/chapters/chap00-preface" },
+      { text: "応用編", link: "/applications/control/" },
     ],
     sidebar: [
       {
-        text: "Part I: Theory",
+        text: "理論編",
         collapsed: false,
         items: [
-          { text: "Chapter 0: Preface", link: "/chapters/chap00-preface" },
-          { text: "Chapter 1: Core Definition", link: "/chapters/chap01-core-definition" },
-          { text: "Chapter 2: Minimal Ingredients", link: "/chapters/chap02-minimal-ingredients" },
-          { text: "Chapter 3: General Equation", link: "/chapters/chap03-general-equation" },
-          { text: "Chapter 4: Stationary Points", link: "/chapters/chap04-stationary-points" },
-          { text: "Chapter 5: Methods Map", link: "/chapters/chap05-methods-map" },
-          { text: "Chapter 6: Constraints", link: "/chapters/chap06-constraints" },
-          { text: "Chapter 7: Cross-domain Table", link: "/chapters/chap07-cross-domain" },
-          { text: "Chapter 8: Implementation Benefits", link: "/chapters/chap08-implementation" },
-          { text: "Appendix A: Reviewer Playbook", link: "/chapters/appA-reviewer-playbook" },
+          { text: "第0章　序文", link: "/chapters/chap00-preface" },
+          { text: "第1章　問題設定と設計自由度", link: "/chapters/chap01-core-definition" },
+          { text: "第2章　停留構造（一次・二次変分）", link: "/chapters/chap02-minimal-ingredients" },
+          { text: "第3章　統一方程式", link: "/chapters/chap03-general-equation" },
+          { text: "第4章　停留点", link: "/chapters/chap04-stationary-points" },
+          { text: "第5章　手法マップ", link: "/chapters/chap05-methods-map" },
+          { text: "第6章　制約", link: "/chapters/chap06-constraints" },
+          { text: "第7章　分野横断表", link: "/chapters/chap07-cross-domain" },
+          { text: "第8章　実装への接続", link: "/chapters/chap08-implementation" },
+          { text: "付録A　レビューア対策メモ", link: "/chapters/appA-reviewer-playbook" },
         ],
       },
       {
-        text: "Part II: Applications",
+        text: "応用編",
         collapsed: false,
         items: [
-          { text: "Control", link: "/applications/control/" },
-          { text: "Physics", link: "/applications/physics/" },
-          { text: "Probability", link: "/applications/probability/" },
+          { text: "制御", link: "/applications/control/" },
+          { text: "物理", link: "/applications/physics/" },
+          { text: "確率", link: "/applications/probability/" },
           { text: "FEM", link: "/applications/fem/" },
         ],
       },
       {
-        text: "Appendix",
+        text: "付録",
         collapsed: true,
         items: [
-          { text: "Style Guide", link: "/style" },
-          { text: "Glossary", link: "/glossary" },
-          { text: "Math (KaTeX samples)", link: "/math" },
+          { text: "文体・記法ガイド", link: "/style" },
+          { text: "用語集", link: "/glossary" },
+          { text: "数式（KaTeX）", link: "/math" },
         ],
       },
     ],
