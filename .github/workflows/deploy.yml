@@ -33,7 +33,7 @@ jobs:
         # which can break `vitepress build` with "Cannot find module @rollup/rollup-...".
         run: npm ci
 
-      - name: Workaround: ensure Rollup native binary is installed (Linux)
+      - name: "Workaround: ensure Rollup native binary is installed (Linux)"
         # npm optionalDependencies are flaky on some runners/versions.
         # Ensure the exact Rollup native package (same version as rollup) is present.
         if: runner.os == 'Linux'
