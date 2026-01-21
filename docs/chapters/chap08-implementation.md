@@ -30,7 +30,7 @@ $$
 g_i = d\mathcal F(u_h)[\phi_i] = \int_0^1 (\nabla u_h \cdot \nabla \phi_i - f \phi_i) dx
 $$
 これは「剛性行列 $\times \mathbf{u}$ － 外力ベクトル」に他ならない。
-**コード上では、これが `grad(loss)(u)` が返す配列そのものである。**
+**コード上では、これが `grad(loss)(u)` が返す配列 `g` そのものである。**
 
 ### Step 4: Metric & Gradient (Level 2 & 3)
 ここで計量 $G$（例えば $L^2$ 内積）を導入する。
@@ -51,14 +51,14 @@ $$
 
 ## 8.2 実装マッピング表
 
-| 理論上の対象 (Theory) | 離散化後の対象 (Discrete) | コード上の表現 (Implementation) |
-| --- | --- | --- |
-| 状態 $u \in \mathcal M$ | 係数ベクトル $\mathbf{u} \in \mathbb R^n$ | `u: Array[float]` |
-| 汎関数 $\mathcal F(u)$ | スカラー関数 $F(\mathbf{u})$ | `loss_fn(u) -> float` |
-| 一次変分 $d\mathcal F(u)$ | 成分ベクトル $\mathbf{g} = \nabla F(\mathbf{u})$ | `g = jax.grad(loss_fn)(u)` |
-| 計量 $G$ (Riesz Map) | 行列 $M$ (Mass Matrix) etc. | `M` (Matrix) or `mv(v)` (LinearOperator) |
-| 散逸作用素 $K \approx G^{-1}$ | 逆行列適用 / 前処理 | `v = solve(M, g)` or `precondition(g)` |
-| 二次変分作用素 $H = \nabla^2 \mathcal F$ | Hessian-Vector Product | `Hv = jax.jvp(grad(f), (u,), (v,))` |
+| 理論上の対象 (Theory) | 離散化後の対象 (Discrete) | コード上の表現 (Implementation) | 備考（FEM読者への注意） |
+| --- | --- | --- | --- |
+| 状態 $u \in \mathcal M$ | 係数ベクトル $\mathbf{u} \in \mathbb R^n$ | `u: Array[float]` | |
+| 汎関数 $\mathcal F(u)$ | スカラー関数 $F(\mathbf{u})$ | `loss_fn(u) -> float` | |
+| 一次変分 $d\mathcal F(u)$ | 成分ベクトル $\mathbf{g} = \nabla F(\mathbf{u})$ | `g = jax.grad(loss_fn)(u)` | ADの出力は「共ベクトル」 |
+| 計量 $G$ (Riesz Map) | 行列 $M$ (Mass Matrix) etc. | `M` (Matrix) or `mv(v)` | FEMの「剛性行列」はここでの $H$ に相当 |
+| 散逸作用素 $K \approx G^{-1}$ | 逆行列適用 / 前処理 | `v = solve(M, g)` | **FEMの $K$ と逆の役割**（ソルバに相当） |
+| 二次変分作用素 $H = \nabla^2 \mathcal F$ | Hessian-Vector Product | `Hv = jax.jvp(grad(f), (u,), (v,))` | FEMの剛性行列そのもの |
 
 ## 8.3 実装の最小仕様（最小インターフェース）
 
@@ -106,7 +106,7 @@ def apply_H(u, v):
 統一方程式 $\dot x = (-K + J) d\mathcal F$ を離散時間で回す。
 
 ### 8.4.1 勾配流（散逸系）
-$x_{k+1} = x_k - \eta K(g_k)$
+$\mathbf{x}_{k+1} = \mathbf{x}_k - \eta K(\mathbf{g}_k)$
 
 ```text
 g = grad(F)(x)
@@ -115,7 +115,7 @@ x = x - eta * v
 ```
 
 ### 8.4.2 Newton-Krylov（停留条件）
-$H \Delta x = -g$（$H = \nabla^2\mathcal F$）を解くが、左辺は純粋な Hessian ではなく $K H$ のような作用素になることもある。
+$H \Delta \mathbf{x} = -\mathbf{g}$（$H = \nabla^2\mathcal F$）を解くが、左辺は純粋な Hessian ではなく $K H$ のような作用素になることもある。
 基本は「Hessian-Vector Product（HVP）と Krylov ソルバ」の組み合わせである。
 
 ```text
@@ -126,6 +126,30 @@ def matvec(v):
 step = scipy.sparse.linalg.cg(A=LinearOperator(matvec), b=-g)
 x = x + step
 ```
+
+### 8.4.3 Saddle Point / Constrained Flow
+第6章で扱った制約付き問題（KKT条件）は、次のブロック行列形式の線形系を解くことに帰着される。これを線形作用素として構成することで、大規模な制約付き問題も扱える。
+
+```python
+def apply_KKT_system(u, lmd, v_u, v_lmd):
+    # 1. Hessian-Vector Product: H * v_u
+    Hv = apply_H(u, v_u)
+    
+    # 2. Constraint Jacobian-Vector Product: DC * v_u
+    # 3. Jacobian-Transpose-Vector Product: (DC)^T * v_lmd
+    # これらは JAX の jvp / vjp で計算可能
+    DC_v = jax.jvp(constraint_fn, (u,), (v_u,))[1]
+    vjp_fun = jax.vjp(constraint_fn, u)[1]
+    DCT_lmd = vjp_fun(v_lmd)[0]
+    
+    # KKT行列の作用を返す
+    return (Hv + DCT_lmd, DC_v)
+
+# ソルバ（MINRES など）で (v_u, v_lmd) を求める
+# [H, DC^T; DC, 0] [v_u; v_lmd] = [-g; -C]
+```
+
+このように、第6章の「サドル点」という理論的要請は、実装上は **「KKT行列というブロック線形作用素の構築と、それに対する対称不安定系ソルバの適用」** という具体的なタスクに翻訳される。
 
 ## 8.5 離散化の注意点
 
