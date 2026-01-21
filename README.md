@@ -18,5 +18,5 @@ npm run docs:build
 ## GitHub Pages デプロイ
 
 - `main` ブランチへ push すると `.github/workflows/deploy.yml` が走ります
-- GitHub 側の設定で **Settings → Pages → Build and deployment** を **GitHub Actions** にしてください
+- GitHub 側の設定で `Settings → Pages → Build and deployment` を `GitHub Actions` にしてください
 
