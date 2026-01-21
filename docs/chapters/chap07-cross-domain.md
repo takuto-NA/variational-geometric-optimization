@@ -39,9 +39,13 @@ title: "第7章　分野横断表"
 | | $d\mathcal F$ | 一次変分（共ベクトル） | Euler–Lagrange 残差、随伴変数、スコア関数 |
 | | $H = \nabla^2\mathcal F$ | 二次変分（Hessian） | 剛性行列、Fisher 情報、Gauss-Newton 近似 |
 | **Discretization** | $\mathcal M_h$ | 有限次元部分空間 | FEM基底、スペクトル基底、NNパラメタ化 |
-| **Geometry** | $G$ | 計量（Riesz 写像） | $L^2/H^1$ 内積、質量行列、Hessian 近似、Fisher 情報 |
+| **Geometry** | $G$ | 計量（Riesz 写像 $T\to T^*$） | $L^2/H^1$ 内積、質量行列、Hessian 近似、Fisher 情報 |
 | | $K$ | 散逸作用素 ($T^*\to T$) | $G^{-1}$、前処理行列、逆ラプラシアン |
 | | $J$ | 保存作用素 ($T^*\to T$) | シンプレクティック行列 ($J_{2n}$)、Poisson 構造 |
+
+> **Note: 作用素の方向と用語の衝突**
+> - **方向**: $G$ と $H$ は「ベクトルから共ベクトルへ ($T\to T^*$)」の写像であるのに対し、$K$ と $J$ は「共ベクトルからベクトルへ ($T^*\to T$)」の写像（逆写像的）である。
+> - **衝突**: FEM の「剛性行列 $K$」は、本書の記号では $H$（$T\to T^*$）に相当する。実装において `solve(K, g)` と書くときの $K^{-1}$ が、本書の散逸作用素 $K$ に対応する。
 | **Algorithm** | $C(x)=0$ | 制約 | 境界条件・正規化・PDE/ODE 制約・ゲージ条件 |
 | | 流れ/反復 | 解法の選択 | 勾配流、Newton、Hamilton、KKT（サドル） |
 

@@ -25,6 +25,10 @@ title: "第3章　統一方程式"
     *   **Positivity**: $\langle \alpha, K_x \alpha \rangle \ge 0$ （半正定値）
     *   典型例：計量の逆写像 $G^{-1}$（またはその一部）
 
+> **Note: 用語の衝突（$K$）について**
+> 本書で用いる **散逸作用素 $K$** は、双対空間（共ベクトル）から接空間（ベクトル）への写像である。一方で、有限要素法（FEM）などの分野では、剛性行列（Stiffness matrix）を慣習的に $K$ と書くが、剛性行列は二次変分（Hessian）$H$ に相当し、ベクトルから共ベクトルへの写像（$T\to T^*$）である。
+> 分野横断で議論する際は、その $K$ が「どちらからどちらへの写像か」を意識することが重要である。
+
 2.  **保存作用素 (Conservation)** $J_x : T_x^* \mathcal M \to T_x \mathcal M$
     *   **Skew-symmetry**: $\langle \alpha, J_x \beta \rangle = - \langle \beta, J_x \alpha \rangle$
     *   典型例：Poisson 構造、シンプレクティック構造の逆
