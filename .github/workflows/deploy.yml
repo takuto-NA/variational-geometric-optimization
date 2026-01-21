@@ -36,8 +36,10 @@ jobs:
       - name: Workaround: ensure Rollup native binary is installed (Linux)
         # npm optionalDependencies are flaky on some runners/versions.
         # Ensure the exact Rollup native package (same version as rollup) is present.
+        if: runner.os == 'Linux'
+        shell: bash
         run: |
-          ROLLUP_VERSION="$(node -p "require('./node_modules/rollup/package.json').version")"
+          ROLLUP_VERSION="$(node -p 'require(\"./node_modules/rollup/package.json\").version')"
           npm i --no-save "@rollup/rollup-linux-x64-gnu@${ROLLUP_VERSION}"
 
       - name: Build (VitePress)
