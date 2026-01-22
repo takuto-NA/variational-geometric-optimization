@@ -7,7 +7,7 @@ title: "第0章 序文"
 本書は、多様体／関数空間上の汎関数を中心に据え、そこから導かれる
 
 - 散逸（勾配流）
-- Newton 型条件（停留条件）
+- Newton 型条件（停留条件；Newton は Algorithm（方程式ソルバ）としても Geometry（Hessian 計量）としても現れる。第5章 [5.3](./chap05-methods-map#5-3-newton-法の二面性algorithm-か-geometry-か) で整理）
 - 保存（Hamilton 流）
 - 制約（KKT / サドル点）
 
@@ -22,6 +22,12 @@ title: "第0章 序文"
 - ただし、各分野の標準的概念（変分、計量、Hamilton 構造、KKT）と矛盾する主張はしない
 - 実装では「何を計算すればよいか」に落ちる形（一次・二次変分、線形化）を重視する
 
+### 最初の5分で掴む「最小の絵」（3行）
+
+- 入力: `Functional 𝓕` と `Space 𝓜`
+- 出力: `Stationary condition d𝓕=0` と（必要なら）`local shape H`
+- 翻訳: `Geometry (G,K,J)` により `d𝓕 (covector)` を `update / dynamics (vector)` に変換する
+
 ## 0.2 本書でやること／やらないこと（スコープ宣言）
 
 ### 本書でやること
@@ -34,6 +40,7 @@ title: "第0章 序文"
 
 - 関数解析・微分幾何の厳密な公理化や証明の網羅
 - 個別分野の教科書的な導出の再掲（必要最小限の“翻訳”に絞る）
+- 非滑らか最適化（subgradient / prox など）の体系的整理（境界例は [第7章 7.2.1](./chap07-cross-domain#7-2-1-境界例非滑らか最適化proxsubgradientはこの地図の外側) を参照）
 - 特定ライブラリの手取り足取りチュートリアル
 - 新理論・新アルゴリズムの提案
 
@@ -79,6 +86,12 @@ $$
 | $J$ | 反対称構造（保存） | シンプレクティック構造など |
 | $H$ | Hessian 作用素 | $H := \nabla^2\mathcal F$、二次変分の行列表現 |
 
+（向きの最小メモ）
+
+- $d\mathcal F \in T^*\mathcal M$（一次変分は共ベクトル）
+- $G, H : T\mathcal M \to T^*\mathcal M$
+- $K, J : T^*\mathcal M \to T\mathcal M$
+
 「勾配」$\nabla\mathcal F$ は空間と計量に依存して定まる（Riesz 表現）。
 本書ではまずユークリッド空間の直感を出発点にし、必要なところで関数空間・多様体へ拡張する。
 
@@ -107,7 +120,7 @@ $$
 | 章 | 主な責務 | 主に触る knob |
 |----|----------|---------------|
 | 第1章 | 設計自由度（4箱）の定義 | 全体フレーム |
-| 第2章 | 停留構造（一次・二次変分）の定義 | Space, Geometry |
+| 第2章 | 停留構造（一次・二次変分）の定義（定義の唯一の置き場） | Space, Geometry |
 | 第3章 | 統一方程式 $\dot x = (-K+J)d\mathcal F$ | Geometry, Algorithm |
 | 第4章 | 停留点近傍の線形化と局所挙動 | Algorithm, Geometry |
 | 第5-8章 | 手法マップ、制約、分野横断、実装 | 各章で明示 |
