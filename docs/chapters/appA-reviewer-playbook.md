@@ -2,6 +2,24 @@
 title: "付録A レビューア対策メモ"
 ---
 
+## A.0 本文へ逆輸入するチェックリスト（Type → 本文の根拠）
+
+査読対応を最短化するために、「反論」ではなく「本文内の証拠」を指せる形で索引化する。
+（リンク先は、査読コメントに応じて“1行追加”しやすい場所を優先している。）
+
+- Type A（optimization語義）  
+  - 根拠: [序文 0.4](./chap00-preface#0-4-optimization-という言葉について)  
+  - 補強: 各章冒頭の定型1行（例: [第3章](./chap03-general-equation#3-1-基本方程式coordinate-free-formulation), [第7章](./chap07-cross-domain), [第8章](./chap08-implementation)）
+- Type B（焼き直し批判）  
+  - 根拠: [序文 0.1](./chap00-preface#0-1-この書籍の立ち位置理論と実装のあいだ), [序文 0.2](./chap00-preface#0-2-本書でやることやらないことスコープ宣言)
+- Type C（抽象的すぎる）  
+  - 根拠: [第8章 8.1–8.3](./chap08-implementation#8-1-抽象から実装へ翻訳のトレースtrace)（ADが返すのは共ベクトル、計量で更新ベクトル化）
+- Type D（数学的に曖昧）  
+  - 根拠: [序文 0.2](./chap00-preface#0-2-本書でやることやらないことスコープ宣言)（仮定を分離）, [第2章 2.4](./chap02-minimal-ingredients#2-4-二次変分connection--linearization)（接続と運用宣言）
+- Type E（何でも同じに見える危険）  
+  - 根拠: [第7章 7.2](./chap07-cross-domain#7-2-読み方)（“差異の可視化”の宣言）, 境界例: [第7章 7.2.1](./chap07-cross-domain#7-2-1-境界例非滑らか最適化proxsubgradientはこの地図の外側)  
+  - 誤読予防: 記号衝突（$K$）: [序文 0.5](./chap00-preface#0-5-記法最小) ↔ [第3章 3.1.1](./chap03-general-equation#記号衝突注意散逸作用素-k-と-fem-の剛性行列-k)
+
 ## A.1 査読者タイプA：「それって最適化じゃないですよね？」
 
 想定質問
