@@ -25,4 +25,5 @@ VGO 的には、この差は「純粋な $\mathcal F$ の最小化」に閉じ�
 
 - [app00-template](./app00-template)
 - [app01-poisson](./app01-poisson)
+- [app02-large-deformation](./app02-large-deformation)
 
