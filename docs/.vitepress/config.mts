@@ -46,6 +46,7 @@ export default defineConfig({
           { text: "第7章 分野横断表", link: "/chapters/chap07-cross-domain" },
           { text: "第8章 実装への接続", link: "/chapters/chap08-implementation" },
           { text: "付録A レビューア対策メモ", link: "/chapters/appA-reviewer-playbook" },
+          { text: "付録C 関数解析ミニマム", link: "/chapters/appC-functional-analysis-minimum" },
         ],
       },
       {
