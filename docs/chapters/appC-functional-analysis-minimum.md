@@ -13,9 +13,9 @@ title: "付録C 関数解析ミニマム（PDE/FEMに十分）"
 | 困りごと | 参照 | 1行まとめ |
 |---|---|---|
 | 「共ベクトル／双対」って何？ | C.2 | “ベクトルを入れると数を返す線形写像” |
-| 「計量で勾配が変わる」が腑に落ちない | C.6 | Hilbert なら \(V\simeq V^*\)（Riesz）で同一視できる |
+| 「計量で勾配が変わる」が腑に落ちない | C.6 | Hilbert なら $V\simeq V^*$（Riesz）で同一視できる |
 | 「弱形式」「テスト関数」って何？ | C.5 | 微分を “積分に逃がして” 方程式を定義する |
-| \(H^1\) 勾配が「平滑化」になる理由 | C.4, C.7 | \(H^1\) 内積は \((I-\Delta)\) 型の“解く”操作を含む |
+| $H^1$ 勾配が「平滑化」になる理由 | C.4, C.7 | $H^1$ 内積は $(I-\Delta)$ 型の“解く”操作を含む |
 | 制約・サドル点で「安定性（inf-sup）」が出る | C.8 | サドル点は “解ける/解けない” を分ける条件が要る |
 | 「Hilbertに落とすと何が明確になる？」 | C.10 | 停留条件/KKTが作用素方程式として読め、well-posednessや前処理が言える |
 
@@ -25,25 +25,25 @@ title: "付録C 関数解析ミニマム（PDE/FEMに十分）"
 |---|---|
 | 第2章（一次変分・計量・Riesz） | C.2, C.6 |
 | 第6章（制約・射影・KKT） | C.3, C.8 |
-| 第8章（\(L^2\) vs \(H^1\) 勾配、質量行列） | C.4, C.7 |
+| 第8章（$L^2$ vs $H^1$ 勾配、質量行列） | C.4, C.7 |
 | 応用（FEM/制御） | C.5, C.7 |
 
 ## C.1 Banach 空間と Hilbert 空間（最小）
 
 ### Definition (Normed space / Banach space)
 
-線形空間 \(V\) にノルム \(\|\cdot\|_V\) が入っているとき、\((V,\|\cdot\|_V)\) をノルム線形空間という。  
-その上で、Cauchy 列が必ず \(V\) の中で極限を持つ（完備）なら Banach 空間という。
+線形空間 $V$ にノルム $\|\cdot\|_V$ が入っているとき、$(V,\|\cdot\|_V)$ をノルム線形空間という。  
+その上で、Cauchy 列が必ず $V$ の中で極限を持つ（完備）なら Banach 空間という。
 
 ### Definition (Inner product space / Hilbert space)
 
-線形空間 \(V\) に内積 \((\cdot,\cdot)_V\) が入り、そこから誘導されるノルム \(\|v\|_V := \sqrt{(v,v)_V}\) に関して完備なら Hilbert 空間という。
+線形空間 $V$ に内積 $(\cdot,\cdot)_V$ が入り、そこから誘導されるノルム $\|v\|_V := \sqrt{(v,v)_V}$ に関して完備なら Hilbert 空間という。
 
 ### Example (典型例)
 
-- 有限次元: \(\mathbb R^n\)（ユークリッド内積）  
-- 関数空間: \(L^2(\Omega)\)（\((u,v)=\int_\Omega u v\,dx\)）  
-- Sobolev: \(H^1(\Omega)\)（弱微分を含む；C.4）
+- 有限次元: $\mathbb R^n$（ユークリッド内積）  
+- 関数空間: $L^2(\Omega)$（$(u,v)=\int_\Omega u v\,dx$）  
+- Sobolev: $H^1(\Omega)$（弱微分を含む；C.4）
 
 > Remark: 本書の立場  
 > 実装と翻訳を主眼とするため、「完備性」や厳密な同値類の扱いは本文では仮定として分離する。必要な場所でこの付録を参照する。
@@ -52,71 +52,71 @@ title: "付録C 関数解析ミニマム（PDE/FEMに十分）"
 
 ### Definition (Dual space)
 
-線形空間 \(V\) に対し、双対空間 \(V^*\) は「\(V\) から \(\mathbb R\) への線形写像全体」である。  
-\(\alpha\in V^*\) と \(v\in V\) の評価を \(\langle \alpha, v\rangle\) と書く（双対ペアリング）。
+線形空間 $V$ に対し、双対空間 $V^*$ は「$V$ から $\mathbb R$ への線形写像全体」である。  
+$\alpha\in V^*$ と $v\in V$ の評価を $\langle \alpha, v\rangle$ と書く（双対ペアリング）。
 
 ### Example (有限次元の復習)
 
-\(V=\mathbb R^n\) では、\(\alpha\in(\mathbb R^n)^*\) は行ベクトルと同一視でき、\(\langle \alpha, v\rangle = \alpha^\top v\) である。  
+$V=\mathbb R^n$ では、$\alpha\in(\mathbb R^n)^*$ は行ベクトルと同一視でき、$\langle \alpha, v\rangle = \alpha^\top v$ である。  
 ただしこの「同一視」は座標に依存しうる点に注意（Hilbert なら Riesz で“自然に”同一視できる；C.6）。
 
 ### Remark (連続の世界での注意)
 
-関数空間では「線形写像全体」では大きすぎるため、通常は **連続（有界）な線形汎関数**を \(V^*\) とみなす（Banach の双対）。
+関数空間では「線形写像全体」では大きすぎるため、通常は **連続（有界）な線形汎関数**を $V^*$ とみなす（Banach の双対）。
 
 ## C.3 有界線形作用素・随伴・自己共役（行列の一般化）
 
 ### Definition (Bounded linear operator)
 
-Banach 空間 \(V,W\) の間の線形写像 \(A:V\to W\) が
-\(\|Av\|_W \le C\|v\|_V\) を満たすとき、有界線形作用素という（連続性と同値）。
+Banach 空間 $V,W$ の間の線形写像 $A:V\to W$ が
+$\|Av\|_W \le C\|v\|_V$ を満たすとき、有界線形作用素という（連続性と同値）。
 
 ### Definition (Adjoint; Hilbert の場合)
 
-Hilbert 空間 \(V\) で、線形作用素 \(A:V\to V\) の随伴 \(A^*\) は
-\((Av,w)_V = (v,A^*w)_V\) を満たす作用素として定義される。
+Hilbert 空間 $V$ で、線形作用素 $A:V\to V$ の随伴 $A^*$ は
+$(Av,w)_V = (v,A^*w)_V$ を満たす作用素として定義される。
 
 ### Remark (実装との対応)
 
-- 「自己共役（\(A=A^*\)）」は “対称行列” の抽象化  
+- 「自己共役（$A=A^*$）」は “対称行列” の抽象化  
 - 「正定値」は “SPD” の抽象化  
-- 第2章の \(G\)（計量）や第2章/第4章の \(H\)（Hessian）は、座標表示では対称（自己共役）として現れることが多い
+- 第2章の $G$（計量）や第2章/第4章の $H$（Hessian）は、座標表示では対称（自己共役）として現れることが多い
 
-## C.4 Sobolev 空間 \(H^1\) と「弱い微分」
+## C.4 Sobolev 空間 $H^1$ と「弱い微分」
 
 ### Definition (Weak derivative; 直感)
 
-関数 \(u\) が滑らかでないときでも、「積分 by parts が成り立つ」意味で微分を定義できる。  
+関数 $u$ が滑らかでないときでも、「積分 by parts が成り立つ」意味で微分を定義できる。  
 この “弱い意味での微分” を弱微分という。
 
-### Definition (Sobolev space \(H^1\))
+### Definition (Sobolev space $H^1$)
 
-領域 \(\Omega\) 上で
-\[
+領域 $\Omega$ 上で
+$$
 H^1(\Omega)
 :=
 \{u\in L^2(\Omega)\mid \nabla u \in L^2(\Omega)\}
-\]
-（\(\nabla u\) は弱微分）と定義する。典型的な内積は
-\[
+$$
+（$\nabla u$ は弱微分）と定義する。典型的な内積は
+$$
 (u,v)_{H^1} := \int_\Omega \left(u v + \nabla u\cdot\nabla v\right)\,dx
-\]
+$$
 である。
 
-### Remark (なぜ \(H^1\) 勾配が平滑化になるか)
+### Remark (なぜ $H^1$ 勾配が平滑化になるか)
 
-\(H^1\) 内積は \(\nabla u\) を含むため、\(L^2\) 内積より高周波成分に“重い罰”を与える。  
-結果として、第8章で述べるような \((I-\Delta)^{-1}\) 型の平滑化が「計量 \(G\) の選択」として現れる（詳しくは C.7）。
+$H^1$ 内積は $\nabla u$ を含むため、$L^2$ 内積より高周波成分に“重い罰”を与える。  
+結果として、第8章で述べるような $(I-\Delta)^{-1}$ 型の平滑化が「計量 $G$ の選択」として現れる（詳しくは C.7）。
 
 ## C.5 弱形式（weak form）と FEM への橋
 
 ### Example (Poisson 方程式の弱形式)
 
-\(-\Delta u = f\) を境界条件つきで解きたいとする。  
-滑らかさが十分でない場合でも、テスト関数 \(v\) を掛けて積分し、
-\[
+$-\Delta u = f$ を境界条件つきで解きたいとする。  
+滑らかさが十分でない場合でも、テスト関数 $v$ を掛けて積分し、
+$$
 \int_\Omega \nabla u\cdot\nabla v\,dx = \int_\Omega f v\,dx
-\]
+$$
 の形（弱形式）なら意味が定義できることが多い。
 
 ### Remark (「テスト関数」は何者か)
@@ -128,34 +128,34 @@ H^1(\Omega)
 
 ### Proposition (Riesz representation; 形式)
 
-Hilbert 空間 \(V\) では、任意の連続線形汎関数 \(\alpha\in V^*\) に対し、ただ一つの \(g\in V\) が存在して
-\[
+Hilbert 空間 $V$ では、任意の連続線形汎関数 $\alpha\in V^*$ に対し、ただ一つの $g\in V$ が存在して
+$$
 \langle \alpha, v\rangle = (g,v)_V \quad (\forall v\in V)
-\]
-が成り立つ。この対応 \(\alpha \leftrightarrow g\) が Riesz 同一視である。
+$$
+が成り立つ。この対応 $\alpha \leftrightarrow g$ が Riesz 同一視である。
 
 ### Remark (第2章との接続)
 
-第2章で \(d\mathcal F(x)\in T_x^*\mathcal M\) を “更新ベクトル” にするには、何らかの内積（計量）が要る。  
-Hilbert の場合、上の定理により \(T_x\mathcal M \simeq T_x^*\mathcal M\) を自然に同一視できるため、\(\operatorname{grad}_G\mathcal F\) が定義できる。
+第2章で $d\mathcal F(x)\in T_x^*\mathcal M$ を “更新ベクトル” にするには、何らかの内積（計量）が要る。  
+Hilbert の場合、上の定理により $T_x\mathcal M \simeq T_x^*\mathcal M$ を自然に同一視できるため、$\operatorname{grad}_G\mathcal F$ が定義できる。
 
-## C.7 Lax–Milgram（なぜ \((I-\Delta)^{-1}\) が「解ける」か）
+## C.7 Lax–Milgram（なぜ $(I-\Delta)^{-1}$ が「解ける」か）
 
 ### Proposition (Lax–Milgram; 使う形)
 
-Hilbert 空間 \(V\) 上の双線形形式 \(a(\cdot,\cdot)\) が
-- **有界**: \(|a(u,v)|\le C\|u\|_V\|v\|_V\)
-- **強制（coercive）**: \(a(u,u)\ge c\|u\|_V^2\)
-を満たすとき、任意の連続線形汎関数 \(\ell\in V^*\) に対して
-\[
+Hilbert 空間 $V$ 上の双線形形式 $a(\cdot,\cdot)$ が
+- **有界**: $|a(u,v)|\le C\|u\|_V\|v\|_V$
+- **強制（coercive）**: $a(u,u)\ge c\|u\|_V^2$
+を満たすとき、任意の連続線形汎関数 $\ell\in V^*$ に対して
+$$
 a(u,v)=\ell(v)\quad(\forall v\in V)
-\]
-を満たす \(u\in V\) が一意に存在する。
+$$
+を満たす $u\in V$ が一意に存在する。
 
 ### Remark (Sobolev 勾配の “solve” を正当化する直感)
 
-\(H^1\) 内積に対応する \(a(u,v)=(u,v)_{H^1}\) は典型的に coercive なので、  
-「\(H^1\) 計量での Riesz 同一視」は“ある楕円型問題を解く”操作になる。これが第8章の \((I-\Delta)^{-1}\) 型の平滑化に対応する。
+$H^1$ 内積に対応する $a(u,v)=(u,v)_{H^1}$ は典型的に coercive なので、  
+「$H^1$ 計量での Riesz 同一視」は“ある楕円型問題を解く”操作になる。これが第8章の $(I-\Delta)^{-1}$ 型の平滑化に対応する。
 
 ## C.8 inf-sup（サドル点が「解ける」ための条件）
 
@@ -172,9 +172,9 @@ a(u,v)=\ell(v)\quad(\forall v\in V)
 
 ## C.9 まとめ：本書の記号を関数解析の言葉で読む
 
-- \(d\mathcal F(x)\in T_x^*\mathcal M\): “微分＝連続線形汎関数（共ベクトル）”
-- \(G\): “内積（計量）＝Riesz 同一視の装置”
-- \(K\approx G^{-1}\): “Riesz 同一視の逆（solve/前処理）”
+- $d\mathcal F(x)\in T_x^*\mathcal M$: “微分＝連続線形汎関数（共ベクトル）”
+- $G$: “内積（計量）＝Riesz 同一視の装置”
+- $K\approx G^{-1}$: “Riesz 同一視の逆（solve/前処理）”
 - 弱形式: “微分を積分に逃がす定義” → 離散化で行列が出る
 
 ## C.10 Hilbert に落とすと「作用素方程式」として何が明確になるか
@@ -183,36 +183,36 @@ a(u,v)=\ell(v)\quad(\forall v\in V)
 
 ### C.10.1 Hilbert 空間の場合（線形）
 
-Hilbert 空間 \(H\) では、Riesz 同一視 \(H\simeq H^*\) が使えるため、停留条件
-\[
+Hilbert 空間 $H$ では、Riesz 同一視 $H\simeq H^*$ が使えるため、停留条件
+$$
 d\mathcal F(x)=0
-\]
-は（計量を選んだ上で）勾配写像 \(A(x):=\nabla_H \mathcal F(x)\in H\) による
-\[
+$$
+は（計量を選んだ上で）勾配写像 $A(x):=\nabla_H \mathcal F(x)\in H$ による
+$$
 A(x)=0
-\]
+$$
 という **非線形作用素方程式**として読むことができる。
 
-同様に、制約付き（KKT）も拡張変数 \(z=(x,\lambda,\mu)\) に対して
-\[
+同様に、制約付き（KKT）も拡張変数 $z=(x,\lambda,\mu)$ に対して
+$$
 R(z)=0
-\]
+$$
 という非線形作用素方程式（サドル点残差）としてまとめられる。
 
 ### C.10.2 Hilbert 多様体の場合（非線形）
 
-多様体 \(\mathcal M\) は線形ではないが、Hilbert 多様体として扱える場合は各点での接空間 \(T_x\mathcal M\) が Hilbert になる。
+多様体 $\mathcal M$ は線形ではないが、Hilbert 多様体として扱える場合は各点での接空間 $T_x\mathcal M$ が Hilbert になる。
 このとき停留条件は
-\[
+$$
 A(x)\in T_x^*\mathcal M,\quad A(x)=0
-\]
+$$
 （共ベクトル値の残差が 0）という形で書け、局所座標（チャート）に落とすと Hilbert 空間上の作用素方程式として扱える。
 
 ### C.10.3 何が「明確になる」か（この枠に落とす利点）
 
 - **well-posedness（存在・一意性・安定性）**: 弱形式＋Lax–Milgram（C.7）や、サドル点の安定性（C.8）のように「解ける条件」を言える。
 - **線形化とソルバ選択**: Newton は Fréchet 微分（線形作用素）を解く操作になるため、Krylov＋前処理の言語と直結する（第8章）。
-- **計量＝前処理の意味**: \(L^2\) と \(H^1\) の違いが「どの Riesz 同一視（どの solve）を選ぶか」として整理できる（C.4, C.7）。
+- **計量＝前処理の意味**: $L^2$ と $H^1$ の違いが「どの Riesz 同一視（どの solve）を選ぶか」として整理できる（C.4, C.7）。
 
 > Remark（限界）
 > 統計多様体など、自然な空間が線形でない場合も多い。その場合でも「局所座標」「接空間／双対」に降ろして残差を 0 にする、という見方は残る。
