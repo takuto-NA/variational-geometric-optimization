@@ -1,4 +1,5 @@
 ---
+
 title: "第2章 停留構造（一次・二次変分）"
 ---
 
@@ -28,6 +29,10 @@ title: "第2章 停留構造（一次・二次変分）"
 例として、\(\mathcal M=\mathbb R^n\) なら \(T_x\mathbb R^n\cong \mathbb R^n\) で、いつもの“方向ベクトル”と同じである。関数空間なら「微小摂動 \(\eta\)（関数）」が方向になる。
 
 残りの2つ（Discretization, Algorithm）は、定義そのものには入らず、後続の章で扱う。
+
+> Remark（停留条件は「非線形作用素方程式」として読める）
+> 停留条件 $d\mathcal F(x)=0$ は、「未知 $x$ に対して残差（共ベクトル）を 0 にする」という意味で、一般化された非線形作用素方程式 $A(x)=0$ とみなせる。
+> 線形空間（Banach/Hilbert）の文脈での直感と、「何が明確になるか」は [付録C](./appC-functional-analysis-minimum) の C.10 を参照。
 
 ### 2.1.1 問題の入力：汎関数
 
@@ -87,6 +92,10 @@ $T_x\mathcal M$ 上の線形汎関数、すなわち共ベクトル（1-form）�
 
 > Note: ここまでは「内積」も「勾配ベクトル」も登場していない。あるのは「方向 $\eta$ に進むと値がどう変わるか」という線形近似だけである。
 
+> Remark（共ベクトル／双対の最小補足）
+> $d\mathcal F(x)$ は「方向 $\eta$ を入れると実数が返る線形写像」であり、$T_x\mathcal M$ の双対空間 $T_x^*\mathcal M$ の元（共ベクトル）である。
+> 直感と最小限の関数解析（双対・ペアリング）は [付録C](./appC-functional-analysis-minimum) の C.2 を参照。
+
 ### Example (Coordinate Representation)
 
 有限次元ユークリッド空間 $\mathcal M=\mathbb R^n$ で座標 $x=(x^1,\dots,x^n)$ を取るとき、任意の方向 $\eta$ に対して
@@ -106,6 +115,11 @@ $d\mathcal F(x)[\eta] = \sum_i \frac{\partial \mathcal F}{\partial x^i}\eta^i$
 $$
 \flat_G : T_x\mathcal M \to T_x^*\mathcal M, \quad v \mapsto G_x(v, \cdot)
 $$
+
+> Remark（「Riemannian」と「Hilbert」の関係）
+> - 多様体に点ごとの内積 $G_x$ を入れるとリーマン多様体になる（統計多様体では Fisher 計量が典型例）。
+> - $\mathcal M$ が線形で、しかも Hilbert 空間（内積＋完備）なら、Riesz 表現により $T_x\mathcal M \simeq T_x^*\mathcal M$ を自然に同一視でき、$d\mathcal F$ を “勾配（ベクトル）” に翻訳できる。
+> 直感の補足は [付録C](./appC-functional-analysis-minimum) の C.1 と C.6 を参照。
 
 ### Definition (Gradient)
 
@@ -157,7 +171,8 @@ Newton 法などを考えるには、一次変分 $d\mathcal F$ の「変化率�
 ### Definition (Second Variation / Hessian)
 
 一般の多様体で二階微分を定義するには「接続（平行移動の規則）」が必要だが、
-本書では最適化で一般的な取り扱いにならい、アフィン接続（または平坦な座標系）を固定して議論する。
+最適化の文脈では通常、アフィン接続（または平坦な座標系）を固定して考えることが多い。
+本書では実装可能性を優先し、必要な範囲では平坦な座標系／自然な接続が固定できる状況を主に扱う（詳細は参照文献に譲る）。
 接続を固定したとき、二次変分（Hessian 作用素） $H := \nabla^2 \mathcal F(x)$ は $(0,2)$ テンソル（双線形形式）として定義される：
 
 $$

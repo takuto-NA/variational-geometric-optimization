@@ -56,6 +56,7 @@ title: 多重線型構造の微積分学
 - 第6章（[制約](./chapters/chap06-constraints)）: KKT を停留構造（サドル）として統一
 - 第7章（[分野横断表](./chapters/chap07-cross-domain)）: 分野差を「空間・汎関数・構造」で見える化する
 - 第8章（[実装への接続](./chapters/chap08-implementation)）: 実装最小仕様（AD／線形作用素／Krylov）へ落とす
+- 付録C（[関数解析ミニマム](./chapters/appC-functional-analysis-minimum)）: Part I/II を読むために必要な関数解析（Hilbert/Banach、双対、弱形式、Sobolev）を最小限で補う
 
 ## 目次
 
@@ -71,6 +72,7 @@ title: 多重線型構造の微積分学
 - [第7章 分野横断表](./chapters/chap07-cross-domain)
 - [第8章 実装への接続](./chapters/chap08-implementation)
 - [付録A レビューア対策メモ](./chapters/appA-reviewer-playbook)
+- [付録C 関数解析ミニマム（PDE/FEMに十分）](./chapters/appC-functional-analysis-minimum)
 
 ### 応用編（Part II）
 
@@ -82,4 +84,5 @@ title: 多重線型構造の微積分学
 ### 付録
 
 - [数式（KaTeX）](./math)
+- [関数解析ミニマム（PDE/FEMに十分）](./chapters/appC-functional-analysis-minimum)
 
