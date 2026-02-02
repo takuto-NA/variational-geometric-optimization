@@ -7,7 +7,7 @@ export default defineConfig({
   title: "多重線型構造の微積分学",
   description: "変分的幾何最適化の統一枠組みと実装への道",
 
-  // GitHub Pages 用: Actions から BASE_URL を注入（例: /repo-name/）
+  // GitHub Pages 用: Actions から BASE_URL を注入。例: /repo-name/
   base: process.env.BASE_URL || "/",
 
   markdown: {
@@ -38,7 +38,7 @@ export default defineConfig({
         items: [
           { text: "第0章 序文", link: "/chapters/chap00-preface" },
           { text: "第1章 問題設定と設計自由度", link: "/chapters/chap01-core-definition" },
-          { text: "第2章 停留構造（一次・二次変分）", link: "/chapters/chap02-minimal-ingredients" },
+          { text: "第2章 停留構造: 一次・二次変分", link: "/chapters/chap02-minimal-ingredients" },
           { text: "第3章 統一方程式", link: "/chapters/chap03-general-equation" },
           { text: "第4章 停留点", link: "/chapters/chap04-stationary-points" },
           { text: "第5章 手法マップ", link: "/chapters/chap05-methods-map" },
@@ -56,6 +56,7 @@ export default defineConfig({
           { text: "制御", link: "/applications/control/" },
           { text: "物理", link: "/applications/physics/" },
           { text: "確率", link: "/applications/probability/" },
+          { text: "ニューラル", link: "/applications/neural/" },
           { text: "FEM", link: "/applications/fem/" },
         ],
       },
@@ -65,7 +66,7 @@ export default defineConfig({
         items: [
           { text: "文体・記法ガイド", link: "/style" },
           { text: "用語集", link: "/glossary" },
-          { text: "数式（KaTeX）", link: "/math" },
+          { text: "数式: KaTeX", link: "/math" },
         ],
       },
     ],

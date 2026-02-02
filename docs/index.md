@@ -6,13 +6,14 @@ title: 多重線型構造の微積分学
 
 変分的幾何最適化の統一枠組みと実装への道
 
-## 筆者モチベーション（なぜこれを書くのか）
+## 筆者モチベーション: なぜこれを書くのか
 
 学部課程で学ぶ線形代数や微積分学は、工学や理学の多くの分野において不可欠な基礎であり、有限次元の最適化や力学系を理解する上では十分に強力です。  
 一方で、連続体力学、最適制御、機械学習、確率的推論といった現代的な問題に取り組もうとすると、勾配・ヘッシアン・線型化・変分といった概念が、空間・離散化・座標の違いを超えて繰り返し現れることに気づきます。
 
 しかし、それらを統一的に理解しようとしたとき、学部レベルの線形代数・微積分学で暗黙に前提とされがちな「固定された有限次元座標空間」という枠組みは、現代の応用と必ずしも一致しない場面があります。  
-本書の目的は、これらの分野に共通して現れる停留構造（勾配・ヘッシアン・停留点近傍の力学）を多重線型構造の微積分という視点から整理し、空間の選び方や離散化の違いを実装上の選択問題として扱える統一枠組みを提示することです。
+本書の目的は、これらの分野に共通して現れる停留構造を多重線型構造の微積分という視点から整理し、空間の選び方や離散化の違いを実装上の選択問題として扱える統一枠組みを提示することです。  
+ここでの停留構造とは、勾配・ヘッシアン・停留点近傍の力学を指します。
 
 ## 本書でやること／やらないこと
 
@@ -21,11 +22,11 @@ title: 多重線型構造の微積分学
 - 分野横断で共通に現れる構造を抽出すること  
   連続体力学、最適制御、機械学習、確率的推論などに現れる停留構造を、同じ言葉で整理します。
 - 「勾配」「ヘッシアン」に対応する抽象的構造を先に与えること  
-  内積や座標を入れる前に、一次・二次変分（多重線型写像）として定義し直します。
+  内積や座標を入れる前に、一次・二次変分として定義し直します。多重線型写像として読む
 - 空間・離散化・座標の違いを“実装上の選択”として位置づけること  
   有限次元／関数空間、FEM 離散化、ニューラルネットワーク近似などを、同一骨格の具体化として扱います。
 - 実装との接続を意識した議論を行うこと  
-  自動微分（AD）が計算しているものを多重線型微分として読み替え、何を設計し何をライブラリに任せるかを明確にします。
+  自動微分 AD が計算しているものを多重線型微分として読み替え、何を設計し何をライブラリに任せるかを明確にします。
 
 ### 本書でやらないこと
 
@@ -34,37 +35,37 @@ title: 多重線型構造の微積分学
 - 特定分野の教科書的解説  
   連続体力学・制御・機械学習・統計推論の体系をそれぞれ最初から解説することはしません。
 - 特定アルゴリズムやライブラリの実装チュートリアル  
-  個別ライブラリの使い方は目的ではなく、共通骨格（一次・二次変分／線形作用素）に焦点を当てます。
+  個別ライブラリの使い方は目的ではなく、共通骨格に焦点を当てます。一次・二次変分／線形作用素
 - 新しい理論やアルゴリズムの提案  
   研究論文ではなく、既存理論の横断的整理と実装への橋渡しを狙います。
 
 ## 想定読者・表記
 
-- 想定読者: 実装まで含めて最適化を扱いたい実務者／研究者（勾配・Hessian・Newton・KKT の基本は既知）  
-- 数式: KaTeX（`$...$` / `$$...$$`）
+- 想定読者: 実装まで含めて最適化を扱いたい実務者／研究者。勾配・Hessian・Newton・KKT の基本は既知  
+- 数式: KaTeX。`$...$` / `$$...$$`
 
-## ロードマップ（理論編）
+## ロードマップ: 理論編
 
 読む順序の最短経路は次の通りです：
 
-- 第0章（[序文](./chapters/chap00-preface)）: 立ち位置・読み方・規約（なにを仮定として分離するか）
-- 第1章（[問題設定と設計自由度](./chapters/chap01-core-definition)）: 固定座標の暗黙前提を外し、設計自由度（knobs）を定義する
-- 第2章（[停留構造（一次・二次変分）](./chapters/chap02-minimal-ingredients)）: 一次・二次変分から停留構造を定義する（定義の唯一の置き場）
-- 第3章（[統一方程式](./chapters/chap03-general-equation)）: 散逸＋保存の一般形（何が何を決めるか）
-- 第4章（[停留点](./chapters/chap04-stationary-points)）: 停留点近傍の線形化と局所挙動
-- 第5章（[手法マップ](./chapters/chap05-methods-map)）: 勾配流／Newton／Hamilton／混合を同じ地図に置く
-- 第6章（[制約](./chapters/chap06-constraints)）: KKT を停留構造（サドル）として統一
-- 第7章（[分野横断表](./chapters/chap07-cross-domain)）: 分野差を「空間・汎関数・構造」で見える化する
-- 第8章（[実装への接続](./chapters/chap08-implementation)）: 実装最小仕様（AD／線形作用素／Krylov）へ落とす
-- 付録C（[関数解析ミニマム](./chapters/appC-functional-analysis-minimum)）: Part I/II を読むために必要な関数解析（Hilbert/Banach、双対、弱形式、Sobolev）を最小限で補う
+- 第0章 [序文](./chapters/chap00-preface): 立ち位置・読み方・規約。なにを仮定として分離するか
+- 第1章 [問題設定と設計自由度](./chapters/chap01-core-definition): 固定座標の暗黙前提を外し、設計自由度を定義する。knobs
+- 第2章 [停留構造: 一次・二次変分](./chapters/chap02-minimal-ingredients): 一次・二次変分から停留構造を定義する。定義の唯一の置き場
+- 第3章 [統一方程式](./chapters/chap03-general-equation): 散逸＋保存の一般形。何が何を決めるか
+- 第4章 [停留点](./chapters/chap04-stationary-points): 停留点近傍の線形化と局所挙動
+- 第5章 [手法マップ](./chapters/chap05-methods-map): 勾配流／Newton／Hamilton／混合を同じ地図に置く
+- 第6章 [制約](./chapters/chap06-constraints): KKT を停留構造として統一する。サドル
+- 第7章 [分野横断表](./chapters/chap07-cross-domain): 分野差を「空間・汎関数・構造」で見える化する
+- 第8章 [実装への接続](./chapters/chap08-implementation): 実装最小仕様へ落とす。AD／線形作用素／Krylov
+- 付録C [関数解析ミニマム](./chapters/appC-functional-analysis-minimum): Part I/II を読むために必要な関数解析を最小限で補う。Hilbert/Banach、双対、弱形式、Sobolev
 
 ## 目次
 
-### 理論編（Part I）
+### 理論編: Part I
 
 - [第0章 序文](./chapters/chap00-preface)
 - [第1章 問題設定と設計自由度](./chapters/chap01-core-definition)
-- [第2章 停留構造（一次・二次変分）](./chapters/chap02-minimal-ingredients)
+- [第2章 停留構造: 一次・二次変分](./chapters/chap02-minimal-ingredients)
 - [第3章 統一方程式](./chapters/chap03-general-equation)
 - [第4章 停留点](./chapters/chap04-stationary-points)
 - [第5章 手法マップ](./chapters/chap05-methods-map)
@@ -72,17 +73,18 @@ title: 多重線型構造の微積分学
 - [第7章 分野横断表](./chapters/chap07-cross-domain)
 - [第8章 実装への接続](./chapters/chap08-implementation)
 - [付録A レビューア対策メモ](./chapters/appA-reviewer-playbook)
-- [付録C 関数解析ミニマム（PDE/FEMに十分）](./chapters/appC-functional-analysis-minimum)
+- [付録C 関数解析ミニマム: PDE/FEMに十分](./chapters/appC-functional-analysis-minimum)
 
-### 応用編（Part II）
+### 応用編: Part II
 
 - [制御](./applications/control/)
 - [物理](./applications/physics/)
 - [確率](./applications/probability/)
+- [ニューラル](./applications/neural/)
 - [FEM](./applications/fem/)
 
 ### 付録
 
-- [数式（KaTeX）](./math)
-- [関数解析ミニマム（PDE/FEMに十分）](./chapters/appC-functional-analysis-minimum)
+- [数式: KaTeX](./math)
+- [関数解析ミニマム: PDE/FEMに十分](./chapters/appC-functional-analysis-minimum)
 
