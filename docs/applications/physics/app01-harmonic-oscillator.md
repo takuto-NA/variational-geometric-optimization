@@ -175,24 +175,37 @@ y=G^\top \nabla H(z),\qquad
 \dot{H}=-(\nabla H)^\top R\nabla H+y^\top u
 $$
 
-## 7. Time Discretization (Explicit Central Difference)
+## 7. Time Integrator As Structure-Preserving Discretization
 
-前提条件: 線形系を時刻 $t_n=n\Delta t$ で離散化する。
+前提条件: まず保存系（$C=0$）に対して、離散化でもハミルトニアン構造を保つ。
 
-$$
-\ddot{q}_n\approx \frac{q_{n+1}-2q_n+q_{n-1}}{\Delta t^2},\qquad
-\dot{q}_n\approx \frac{q_{n+1}-q_{n-1}}{2\Delta t}
-$$
+### 7.1 Störmer-Verlet (Symplectic, Explicit Form For Separable $H$)
 
 $$
-\left(\frac{1}{\Delta t^2}M+\frac{1}{2\Delta t}C\right)q_{n+1}
-=
-f_n
--
-\left(K-\frac{2}{\Delta t^2}M\right)q_n
--
-\left(\frac{1}{\Delta t^2}M-\frac{1}{2\Delta t}C\right)q_{n-1}
+H(q,p)=\frac{1}{2}p^\top M^{-1}p+\frac{1}{2}q^\top Kq
 $$
+
+$$
+\begin{aligned}
+p_{n+\frac{1}{2}}&=p_n-\frac{\Delta t}{2}\left(Kq_n-f_n\right),\\
+q_{n+1}&=q_n+\Delta t\,M^{-1}p_{n+\frac{1}{2}},\\
+p_{n+1}&=p_{n+\frac{1}{2}}-\frac{\Delta t}{2}\left(Kq_{n+1}-f_{n+1}\right).
+\end{aligned}
+$$
+
+この更新はシンプレクティックであり、長時間計算でのエネルギードリフトを抑える。
+
+### 7.2 Dissipative Extension (pH With $R\succeq 0$)
+
+前提条件: 減衰は散逸行列 $R$ で与え、受動性を壊さない近似を採用する。
+
+$$
+\dot{z}=(J-R)\nabla H(z)+Gu
+\quad\Rightarrow\quad
+z_{n+1}=z_n+\Delta t\,(J-R)\nabla H\!\left(\frac{z_{n+1}+z_n}{2}\right)+\Delta t\,Gu_{n+\frac{1}{2}}
+$$
+
+陰的中点則は線形 pH 系で構造（歪対称 + 散逸）を離散レベルで反映し、受動性解析と整合する。
 
 ## 8. Why Mass Lumping Enables Explicit Update
 
@@ -202,9 +215,11 @@ $$
 M\to M_{\mathrm{lumped}}\approx \mathrm{diag}(m_1,\dots,m_n)
 $$
 
+質量集中化は、一貫質量行列（Consistent Mass）を対角近似する工学的トレードオフであり、変分導出の厳密性より計算効率を優先する。
+
 ## 9. Stability Condition From Spectrum
 
-前提条件: 無外力・無減衰の線形系 $M\ddot{q}+Kq=0$ を対象とする。
+前提条件: 無外力・無減衰の線形系 $M\ddot{q}+Kq=0$ に対する陽的 Störmer-Verlet 更新を対象とする。
 
 $$
 K\phi=\lambda M\phi,\qquad
@@ -217,24 +232,55 @@ $$
 \frac{2}{\sqrt{\lambda_{\max}(M^{-1}K)}}
 $$
 
-## 10. Optimization Enters As Matrix Design
+## 10. Optimization With Adjoint Method
 
-前提条件: 設計変数 $\theta$ によって離散モデルの行列が変化する。
-
-$$
-M(\theta),\ C(\theta),\ K(\theta)
-$$
+前提条件: 設計変数 $\theta$ によって離散モデル行列が変化し、目的関数の勾配を効率的に計算したい。
 
 $$
-\hat{q}(\omega)=
-\left(K(\theta)+i\omega C(\theta)-\omega^2M(\theta)\right)^{-1}
-\hat{f}(\omega)
+M(\theta),\ C(\theta),\ K(\theta),\qquad
+A(\omega,\theta):=K(\theta)+i\omega C(\theta)-\omega^2M(\theta)
+$$
+
+### 10.1 State Equation (Frequency Domain)
+
+$$
+A(\omega,\theta)\hat{q}(\omega,\theta)=\hat{f}(\omega)
+$$
+
+### 10.2 Objective Function
+
+$$
+J(\theta)=\frac{1}{2}\int_{\Omega_\omega}\left\|W\hat{q}(\omega,\theta)-\hat{q}_{\mathrm{target}}(\omega)\right\|_2^2\,d\omega
+$$
+
+### 10.3 Adjoint Equation
+
+$$
+A(\omega,\theta)^\ast \hat{\lambda}(\omega,\theta)
+=
+W^\ast\!\left(W\hat{q}(\omega,\theta)-\hat{q}_{\mathrm{target}}(\omega)\right)
+$$
+
+### 10.4 Gradient Formula
+
+$$
+\frac{\partial J}{\partial \theta_k}
+=
+-\Re\!\int_{\Omega_\omega}
+\hat{\lambda}(\omega,\theta)^\ast
+\left(\frac{\partial A(\omega,\theta)}{\partial \theta_k}\right)
+\hat{q}(\omega,\theta)\,d\omega
 $$
 
 $$
-\min_\theta J(\theta),\qquad
-J(\theta)=\sup_{\omega\in\Omega_\omega}\left\|W\hat{q}(\omega)\right\|
+\frac{\partial A}{\partial \theta_k}
+=
+\frac{\partial K}{\partial \theta_k}
++i\omega\frac{\partial C}{\partial \theta_k}
+-\omega^2\frac{\partial M}{\partial \theta_k}
 $$
+
+この形により、設計変数の数が多くても、周波数ごとに「状態方程式 1 回 + 随伴方程式 1 回」で勾配を評価できる。
 
 ## 11. pH-Constrained Optimization (Passivity-Preserving)
 
@@ -261,7 +307,7 @@ $$
 \Rightarrow
 \text{Stability Bound}
 \Rightarrow
-\text{Optimization}
+\text{Adjoint Optimization}
 $$
 
 ## Notes
@@ -269,4 +315,6 @@ $$
 - 変分原理は連続体モデルの一貫した導出規則を与える。
 - FEM は変分問題の有限次元射影として $M,C,K$ を生成する。
 - pH 形式はエネルギー収支を明示し、設計制約の形を与える。
-- 陽解法の安定限界は固有値問題で決まり、解析と設計が同じ線形代数に集約される。
+- 構造保存型積分（Störmer-Verlet, 陰的中点）は pH の幾何構造と受動性解析に整合する。
+- 質量集中化は計算効率の利点を持つ一方で、一貫質量からの近似であることを明示して使う。
+- 随伴法により、勾配計算は設計変数数ではなく「状態方程式 + 随伴方程式」の解法回数に整理される。
