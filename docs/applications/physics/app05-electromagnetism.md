@@ -1,86 +1,108 @@
 ---
-title: "Physics: Electromagnetism (Action, Constraints, Gauge)"
+title: "Physics: Electromagnetism (Action, Gauge, and Port Structure)"
 ---
+
+## Responsibility
+
+このページの責務は、電磁気を作用原理・拘束・ゲージ自由度の統一視点で整理し、離散化と最適化へ接続することである。
+
+## Position In Unified Flow
+
+- 本章は `app01` の場の変分構造を電磁場へ適用する章である。
+- 受け取り: 作用、弱形式、pH 的エネルギー収支。
+- 受け渡し: 拘束保持離散化と設計最適化。
+
+## Symbol Dictionary
+
+- スカラー電位: $\phi(x,t)$
+- ベクトルポテンシャル: $A(x,t)$
+- 電場: $E=-\partial_t A-\nabla \phi$
+- 磁場: $B=\nabla\times A$
+- 電荷密度: $\rho_q$, 電流密度: $J_c$
 
 ## Problem
 
-電磁気学（Maxwell 方程式）を、VGO の観点から
-
-- **変分原理（作用）**
-- **拘束（ガウス則）**
-- **ゲージ自由度（冗長性）**
-
-として整理する。
+前提条件: 線形媒質を仮定し、外部ソース $(\rho_q,J_c)$ を与える。
 
 ## Functional
 
-ポテンシャル $(\phi, A)$ を用いると
-
 $$
-E = -\partial_t A - \nabla \phi,
-\qquad
-B = \nabla\times A
-$$
-
-で、電磁場の作用は（外部電荷・電流を含めて）
-
-$$
-\mathcal F[\phi,A]
-:=
+\mathcal{F}[\phi,A]
+=
 \int
-\Big(
+\left(
 \frac{\varepsilon_0}{2}|E|^2
 -
 \frac{1}{2\mu_0}|B|^2
 -
-\rho\,\phi
+\rho_q\phi
 +
-J\cdot A
-\Big)\,dx\,dt
+J_c\cdot A
+\right)\,dx\,dt
 $$
 
-の停留条件として与えられる。
+停留条件 $\delta \mathcal{F}=0$ から Maxwell 方程式が導かれる。
 
-Remark:
-ここでも「最小化」というより「停留構造の生成」が主眼である。
+## Geometry (J, R, G)
 
-## Geometry (G, J)
+前提条件: 保存系を基準にし、導電損失は散逸として追加する。
 
-- $J$: Maxwell は保存的（反対称）な構造を持ち、適切な変数では Hamilton 形式で書ける  
-  （例: $(E,B)$ を状態とした回転型の更新）
-- $G$: 伝導（Ohmic loss）や数値散逸を入れるなら $G\succeq 0$ として追加できる
+$$
+\dot{z}=(J-R)\nabla H(z)+Gu
+$$
 
-VGO 的には「$J$ が回転を作り、$G$ が散逸を作る」という役割分担で理解するのが見通しがよい。
+ここで $R=0$ なら保存系、$R\succeq 0$ を導入すれば Ohmic loss を表現できる。
 
 ## Discretization
 
-電磁気で重要なのは「拘束を壊さない離散化」。
+重要条件は拘束保持である。
 
-- **ガウス則**: $\nabla\cdot B=0$, $\nabla\cdot E=\rho/\varepsilon_0$
-- **ゲージ**: $(\phi,A)$ の表現には同値性があり、数値的には冗長（不適切だと特異）
+$$
+\nabla\cdot B=0,\qquad
+\nabla\cdot E=\frac{\rho_q}{\varepsilon_0}
+$$
 
-代表的な方針は
-
-- **拘束保持**: 離散発散・離散回転が厳密に整合するスキーム
-- **DEC / Hodge**: 外微分 $\mathrm d$ と Hodge 作用素に沿って離散化し、構造を保つ
-- **ゲージ固定**: 例として Coulomb ゲージ $\nabla\cdot A=0$ などを課し、KKT（鞍点）として解く
+離散化では、離散外微分と離散 Hodge を整合させることで拘束破綻を防ぐ。  
+ゲージ固定（例: $\nabla\cdot A=0$）を使う場合、鞍点系として解く。
 
 ## Algorithm
 
-実装上は「拘束（ガウス則）とゲージ（冗長性）をどう扱うか」が中心課題になる。
+前提条件: 更新後にガウス拘束を満たす。
 
-- **(A) $E,B$ 直接更新 + 拘束補正**: 更新後に $\nabla\cdot B=0$ を保つ補正（射影）
-- **(B) $(\phi,A)$ で解く + ゲージ固定**: 未定乗数／Poisson 型方程式を解いて拘束を満たす
+1. 主変数を時間更新する。  
+2. 拘束残差を計算する。  
+3. Poisson 型補正または KKT 補正で拘束を回復する。  
 
-いずれも VGO 的には
+この手順は `app02` の拘束補正と同型である。
 
-- 拘束 = 未定乗数（KKT）
-- ゲージ = 座標冗長性（良い計量/正則化の選択）
+## Stability Condition
 
-として統一的に見える。
+前提条件: 陽的時間積分を使う場合。
+
+$$
+\Delta t \le \frac{\alpha h_{\min}}{c_{\max}}
+$$
+
+ここで $h_{\min}$ は最小格子長、$c_{\max}$ は最大波速、$\alpha$ はスキーム依存の定数である。
+
+## Optimization Bridge
+
+設計変数 $\theta$ によって媒質パラメータを変える。
+
+$$
+\varepsilon(\theta),\ \mu(\theta),\ \sigma(\theta)
+$$
+
+周波数領域では
+
+$$
+\hat{x}(\omega)=\mathcal{A}(\theta,\omega)^{-1}\hat{u}(\omega)
+$$
+
+として、共振抑制や透過特性を目的関数にできる。  
+受動性を維持するには散逸行列の半正定値条件を課す。
 
 ## Notes
 
-- 電磁気は「場の理論」の最小例で、FEM/DEC/最適化が自然に交差する領域。
-- 本書の観点では、Maxwell を「方程式」として覚えるより、**作用・制約・ゲージ**の 3 点で再構成すると応用（数値法設計）に強くなる。
-
+- 電磁気では、拘束保持とゲージ処理の失敗が計算不安定の主因になりやすい。
+- pH 観点を使うと、保存成分と散逸成分を統一的に管理できる。

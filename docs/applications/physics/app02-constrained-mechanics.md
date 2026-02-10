@@ -1,73 +1,110 @@
 ---
-title: "Physics: Constrained Mechanics (Variational + KKT)"
+title: "Physics: Constrained Mechanics (Variational, KKT, and pH)"
 ---
+
+## Responsibility
+
+このページの責務は、拘束付き力学を変分原理から KKT 系へ落とし、port-Hamiltonian 構造と最適化へ接続することである。
+
+## Position In Unified Flow
+
+- 本章は `app01` の「弱形式から離散化」の後段に位置する。
+- 受け取り: $M, C, K$ と状態方程式。
+- 受け渡し: 拘束付き時間積分と設計可能な KKT 構造。
+
+## Symbol Dictionary
+
+- 一般化座標: $q(t)\in\mathbb{R}^n$
+- 拘束: $g(q)=0,\ g:\mathbb{R}^n\to\mathbb{R}^m$
+- 拘束ヤコビアン: $A(q):=\nabla g(q)\in\mathbb{R}^{m\times n}$
+- 未定乗数: $\lambda(t)\in\mathbb{R}^m$
 
 ## Problem
 
-ホロノミック拘束 $g(q)=0$ を持つ力学系を、**変分原理 + 制約付き最適化（KKT）**として書き下す。
-
-- 一般化座標: $q(t)\in\mathbb R^n$
-- 拘束: $g:\mathbb R^n\to\mathbb R^m,\; g(q)=0$
-- ラグランジアン: $L(q,\dot q,t)$
+前提条件: ホロノミック拘束を持つ有限次元力学系を対象とし、拘束力は理想拘束として仕事をしない。
 
 ## Functional
 
-拘束をラグランジュ未定乗数 $\lambda(t)$ で入れた拡張作用
-
 $$
-\mathcal F[q,\lambda]
+\mathcal{F}[q,\lambda]
 :=
 \int_{t_0}^{t_1}
-\Big(
-L(q,\dot q,t) + \lambda^\top g(q)
-\Big)\,dt
+\left(
+L(q,\dot{q},t)+\lambda^\top g(q)
+\right)\,dt
 $$
 
-の停留条件をとる（狭義の「最小化」ではなく、停留構造の同定）。
+停留条件:
 
-## Geometry (G, J)
+$$
+\delta \mathcal{F}=0
+\Rightarrow
+\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{q}}\right)-\frac{\partial L}{\partial q}
+=
+A(q)^\top \lambda,\qquad
+g(q)=0
+$$
 
-- $G$: ここでは散逸を入れず $G=0$（純粋な保存系）
-- $J$: Hamilton 形式に落とすとシンプレクティック構造（反対称）を持つ  
-  拘束は「$J$ を変える」のではなく、**許容方向（接空間）への射影**として入るのが自然
+## Geometry (J, R, G)
 
-Remark:
-拘束付きの時間発展は、連続系では未定乗数が「反力」として現れ、離散系では KKT 系（鞍点問題）として現れる。
+前提条件: まず保存系を基準にし、必要なら散逸を追加する。
+
+$$
+\dot{z}=(J-R)\nabla H(z)+G u + G_\lambda \lambda
+$$
+
+$$
+g(q)=0,\qquad A(q)\dot{q}=0
+$$
+
+ここで $G_\lambda \lambda$ が拘束反力を表し、離散化後に KKT の鞍点構造を作る。
 
 ## Discretization
 
-代表的には 2 通り。
+時間離散した 1 ステップの線形化は、典型的に次の KKT 系となる。
 
-- **変分積分（variational integrator）**: 離散作用 $S_d(q_0,\dots,q_N)$ を作り、離散オイラー・ラグランジュ + 拘束で更新  
-  - 長時間のエネルギー挙動が安定しやすい（構造保存）
-- **射影法 / KKT**: いったん拘束なしで更新し、その後に $g(q)=0$ を満たすように射影（未定乗数は射影の副産物）
+$$
+\begin{pmatrix}
+\widehat{M} & A^\top\\
+A & 0
+\end{pmatrix}
+\begin{pmatrix}
+\Delta q\\
+\Delta \lambda
+\end{pmatrix}
+=
+\begin{pmatrix}
+r_q\\
+r_g
+\end{pmatrix}
+$$
+
+ここで $\widehat{M}$ は質量・減衰・接線剛性を含む有効行列である。
 
 ## Algorithm
 
-VGO の観点では「制約付き最適化を、力学の更新として読む」。
+前提条件: 1 ステップ内で拘束残差をゼロに近づける。
 
-- **連続**: 変分 → 拘束力（$\lambda$）が決まる
-- **離散**: 各ステップで
-  - 更新量（例: $\Delta q, \Delta p$）と
-  - 未定乗数（反力）$\lambda$
-  
-  を同時に解く **KKT 系**になる
+1. 予測更新で $\Delta q_{\mathrm{free}}$ を計算する。  
+2. KKT 系で $\Delta \lambda$ を解く。  
+3. $\Delta q=\Delta q_{\mathrm{free}}-A^\top \Delta \lambda$ で補正する。  
+4. $g(q^{k+1})$ と $A(q^{k+1})\dot{q}^{k+1}$ を再評価する。  
 
-（実装上の定石）  
-拘束のヤコビアン $A:=\nabla g(q)$ を使うと、線形化した射影は
+## Optimization Bridge
+
+拘束設計を変数化すると、制約と応答を同時に最適化できる。
 
 $$
-\begin{aligned}
-\Delta q &\leftarrow \Delta q - A^\top \Delta \lambda\\
-A\,\Delta q &= -g(q)
-\end{aligned}
+\min_{\theta,\lambda}\ J(\theta,q)
+\quad
+\text{subject to}
+\quad
+M(\theta)\ddot{q}+C(\theta)\dot{q}+K(\theta)q=A(q)^\top\lambda+f
 $$
 
-の形（鞍点／Schur 補）になり、数値線形代数（前処理）が効く。
+拘束満足と応答性能を同時に扱うため、随伴法は KKT 構造をそのまま利用できる。
 
 ## Notes
 
-- このページの主眼は「拘束 = KKT」という VGO 的統一視点  
-  詳細は制約章（[chap06-constraints](../../chapters/chap06-constraints)）と接続する。
-- 非ホロノミック拘束は「許容変分」の定義が変わるため、同じ KKT でも扱いが一段難しくなる。
-
+- 拘束は追加項ではなく、状態空間を定める幾何条件として解釈すると見通しが良い。
+- 数値実装では Schur 補と前処理が計算コストを支配する。

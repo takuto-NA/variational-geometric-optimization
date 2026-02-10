@@ -1,84 +1,118 @@
 ---
-title: "Physics: Thermodynamics (Free Energy + Dissipation)"
+title: "Physics: Thermodynamics (Free Energy, Dissipation, and Design)"
 ---
+
+## Responsibility
+
+このページの責務は、熱力学を自由エネルギーの変分問題として書き、散逸構造と最適化を同じ枠で扱うことである。
+
+## Position In Unified Flow
+
+- 本章は `app01` の散逸ブロックを熱過程へ拡張する章である。
+- 受け取り: エネルギー関数と受動性条件。
+- 受け渡し: 勾配流、制約付き緩和、設計最適化。
+
+## Symbol Dictionary
+
+- 状態変数: $x(t)\in\mathbb{R}^n$
+- 自由エネルギー: $\mathcal{F}(x)$
+- 計量行列: $G(x)=G(x)^\top\succeq 0$
+- 保存制約: $c(x)=0$, ヤコビアン: $C(x):=\nabla c(x)$
 
 ## Problem
 
-熱力学を「平衡（最適化）」と「緩和（勾配流）」の 2 つに分け、VGO の枠組み（Functional と計量 $G$）で見直す。
-
-- 平衡: 状態が自由エネルギー（またはエントロピー）で特徴づけられる
-- 非平衡: 散逸により自由エネルギーが単調に減少する（緩和）
+前提条件: 等温環境で、自由エネルギー減少が緩和方向を規定する。
 
 ## Functional
 
-典型は Helmholtz 自由エネルギー
-
 $$
-\mathcal F(x) := F(x)=U(x)-T\,S(x)
+\mathcal{F}(x)=U(x)-T S(x)
 $$
 
-で、保存制約（例: 質量、組成）
+制約付き平衡は
 
 $$
+\min_x \mathcal{F}(x)
+\quad
+\text{subject to}
+\quad
 c(x)=0
 $$
 
-の下で停留/最小化を考える。
+で与えられる。
 
-Remark:
-最大エントロピーは「$-S$ を最小化」する問題として同型に扱える。
+## Geometry (J, R, G)
 
-## Geometry (G, J)
-
-熱の緩和（散逸）は基本的に「回転（$J$）」より「降下（$G$）」が支配的である。
-
-- $J$: ここでは $J=0$（保存的な回転を明示的に入れない）
-- $G$: 物性（伝導率・抵抗など）を反映する対称正定値として選ぶ
-
-すると VGO の最小形は
+前提条件: 回転成分より散逸成分が支配的なモデルを採用する。
 
 $$
-\dot x = -G(x)\,\nabla \mathcal F(x)
+\dot{x}=-G(x)\nabla \mathcal{F}(x)
 $$
 
-で、$\mathcal F$ が Lyapunov 関数として減少する（$G\succeq 0$）。
+制約付きでは
+
+$$
+\dot{x}=-G(x)\nabla \mathcal{F}(x)+C(x)^\top \lambda,\qquad c(x)=0
+$$
+
+となり、$\mathcal{F}$ は Lyapunov 関数として機能する。
 
 ## Discretization
 
-熱力学の「正しい離散化」は、しばしば
-
-- 自由エネルギーの単調減少
-- 制約（保存量）の保持
-
-を満たすかどうかで評価される。
-
-（例）時間離散で
+陽的 Euler の最小形:
 
 $$
-x_{k+1}\approx x_k - \Delta t\,G(x_k)\nabla \mathcal F(x_k)
+x_{k+1}=x_k-\Delta t\,G(x_k)\nabla\mathcal{F}(x_k)
 $$
 
-とすると、$\Delta t$ が大きいと単調性が崩れるので、陰的化・分割（operator splitting）・線形化が使われる。
+前提条件: 時間刻みを十分小さく選ぶ。  
+単調減少を強く要求する場合は陰的化または分割法を用いる。
 
 ## Algorithm
 
-代表的な実装パターンは「制約付きの勾配流」。
-
-- **制約なし**: $x \leftarrow x - \eta\,G\nabla \mathcal F$
-- **制約あり**: 未定乗数 $\lambda$ を入れて
+制約付き緩和の離散形は KKT 系に落ちる。
 
 $$
-\dot x = -G\nabla \mathcal F + C(x)^\top \lambda,
-\qquad
-c(x)=0
+\begin{pmatrix}
+\widehat{G} & C^\top\\
+C & 0
+\end{pmatrix}
+\begin{pmatrix}
+\Delta x\\
+\lambda
+\end{pmatrix}
+=
+\begin{pmatrix}
+-\nabla \mathcal{F}\\
+-c
+\end{pmatrix}
 $$
 
-（ここで $C=\nabla c$）の形にする  
-→ 離散化すると KKT（鞍点）を解くことになる
+この形は `app02` の拘束力学と同型である。
+
+## Optimization Bridge
+
+材料パラメータ $\theta$ が熱容量・伝導率へ入る場合:
+
+$$
+G(\theta),\ \mathcal{F}(x;\theta)
+$$
+
+設計問題:
+
+$$
+\min_\theta
+\int_0^{T_{\mathrm{final}}}
+\Phi(x(t),\theta)\,dt
+\quad
+\text{subject to}
+\quad
+\dot{x}=-G(\theta)\nabla\mathcal{F}(x;\theta)
+$$
+
+受動性条件 $G(\theta)\succeq 0$ を保つことで物理的一貫性を維持する。
 
 ## Notes
 
-- 「何を $\mathcal F$ と置くか」だけでなく「$G$ をどう置くか」で緩和則が変わる  
-  これは VGO の中心的なメッセージ（幾何＝計量がアルゴリズムを決める）と同じ構造。
-- Onsager の最小散逸・GENERIC などは、この考え方を系統立てた枠組みとして理解できる。
-
+- 熱力学での「良いアルゴリズム」は、自由エネルギー減少と保存制約保持を同時に満たす。
+- pH 観点では、熱過程は主に散逸ブロックとして解釈できる。

@@ -2,68 +2,55 @@
 title: "Applications: Physics"
 ---
 
-本章は 物理（作用原理、Hamilton 系、散逸系、場の理論など）の応用例を収録する。
+## Responsibility
 
-## VGO の文脈での見方（Physics = 変分原理 + 制約 + 幾何）
+このページの責務は、Physics 章全体を「現象別」ではなく「抽象構造別」に再編し、各アプリ文書を一本化ストーリーへ接続することである。
 
-物理の多くは、以下の形に（少なくとも一度は）落ちる。
+## Unified Story
 
-- **目的関数（汎関数）**: 作用 $S[q]$、エネルギー $E[u]$、自由エネルギー $F$、散逸ポテンシャル $\mathcal{R}$、エントロピー $-S$ など
-- **変数（最適化変数）**: 軌道 $q(t)$、場 $u(x,t)$、確率密度 $\rho(x)$、ゲージ場 $A$ のような「関数空間上の変数」
-- **制約**: 保存則（質量・電荷・エネルギー）、幾何拘束、非圧縮 $\nabla\cdot v=0$、ガウス則、境界条件、構成式（constitutive law）
-- **幾何（計量・構造）**: シンプレクティック（Hamilton 系）、接触幾何（熱力学）、Lie–Poisson（流体）、Hodge/ゲージ（電磁気）など  
-  VGO ではこの「構造」を壊さないように、勾配・前処理・離散化（時間積分/空間離散）を設計する
+Physics 章は次の連鎖を共通言語とする。
 
-以下では、代表分野を VGO の対応表として眺める。
+$$
+\text{Action}
+\Rightarrow
+\text{Weak Form}
+\Rightarrow
+\text{FEM or Spatial Discretization}
+\Rightarrow
+\text{port-Hamiltonian or Gradient Structure}
+\Rightarrow
+\text{Time Integration}
+\Rightarrow
+\text{Stability Bound}
+\Rightarrow
+\text{Optimization}
+$$
 
-### 解析力学（作用原理 / Hamilton 系）
+## Reading Order (Structure-First)
 
-- **典型の目的関数**: Hamilton の原理 $S[q]=\int_{t_0}^{t_1} L(q,\dot q,t)\,dt$
-- **制約の入り方**:
-  - **ホロノミック拘束** $g(q)=0$: ラグランジュ未定乗数で制約付き最適化
-  - **非ホロノミック拘束**: 変分の取り方（許容変分空間）自体が制約
-- **幾何**: Hamilton 形式 $(q,p)$ は **シンプレクティック構造**を持ち、保存量・可積分性・長時間安定性に直結  
-  → VGO では **自然な計量/前処理**（例: 変数スケーリング、制約射影）や **構造保存離散化**（変分積分/シンプレクティック積分）が重要になる
+1. `app01-harmonic-oscillator`: 連続体から最適化までの基準フルチェーン  
+2. `app02-constrained-mechanics`: 拘束、未定乗数、KKT の統一化  
+3. `app03-thermodynamics`: 散逸、勾配流、自由エネルギー設計  
+4. `app04-fluid-mechanics`: 弱形式、非圧縮拘束、安定条件  
+5. `app05-electromagnetism`: 作用、ガウス拘束、ゲージ処理  
 
-### 熱力学（自由エネルギー / エントロピー / 散逸）
+## Chapter Map
 
-- **典型の目的関数**:
-  - 平衡: **自由エネルギー最小化** $F=U-TS$（制約付き最適化として）
-  - 情報論的: **最大エントロピー**（制約の下で $S$ 最大）
-  - 非平衡: **散逸を含む変分原理**（Onsager の最小散逸、GENERIC など）
-- **変数**: 状態変数（内部エネルギー、エントロピー、組成）、場としての温度 $T(x)$、密度 $\rho(x)$ など
-- **制約**: 質量保存・エネルギーバランス・状態方程式（構成式）
-- **幾何**:
-  - 平衡近傍: **勾配流（gradient flow）**としての緩和（計量の選択がダイナミクスを規定）
-  - 熱力学の基本構造: **接触幾何**（Legendre 変換と相性が良い）
-  → VGO では「何を最小化/最大化するか」に加えて「どの計量で降りるか」が物理法則（緩和則）に相当する
+- `app01` は辞書章（記号と最小原理の基準）。
+- `app02` は拘束付き発展の一般形。
+- `app03` は散逸主導の緩和系。
+- `app04` は場の力学と KKT 射影。
+- `app05` は場の作用と拘束保持離散化。
 
-### 流体力学（保存則 + 幾何 + 制約）
+## Cross-Chapter Rules
 
-- **典型の目的関数**:
-  - 非粘性（Euler）: 作用（最小作用）や Hamilton 形式（Lie–Poisson）
-  - 粘性・拡散: エネルギー + 散逸（勾配流、変分不等式、最小散逸）
-- **代表的な制約**:
-  - **非圧縮**: $\nabla\cdot v=0$（圧力が未定乗数として現れる）
-  - 連続の式（質量保存）や境界条件（壁面、流入出）
-- **幾何**:
-  - 速度場の空間は線形でも、**体積保存微分同相群**という幾何が背後にある（Lie–Poisson 構造）
-  - **最適輸送**（Benamou–Brenier）により、確率密度の力学を「距離最小化」として書ける場合がある（計量＝Wasserstein など）
-  → VGO では「制約（非圧縮）を保った更新」と「幾何に整合な離散化（保存則・発散ゼロ・エネルギー安定）」が鍵
+- 数式記法は `$ ... $` と `$$ ... $$` に統一する。
+- 各章冒頭に `Responsibility` と `Position In Unified Flow` を置く。
+- 各キーメッセージ式の直前に前提条件を明記する。
+- 受動性を扱う章では半正定値条件（例: $R\succeq 0$）を明記する。
+- 安定条件は固有値または CFL の形で書き、前提条件を添える。
 
-### 電磁気学（場の変分原理 / ゲージ / Hodge）
-
-- **典型の目的関数**: Maxwell 方程式は **作用**（電磁場ラグランジアン）から導け、エネルギーやポテンシャルを最小化する形でも記述できる
-- **変数**:
-  - $(E,B)$ を直接扱うか、ポテンシャル $(\phi, A)$ を扱うかで「制約の置き方」が変わる
-- **制約**:
-  - ガウス則（$\nabla\cdot E=\rho/\varepsilon_0$, $\nabla\cdot B=0$）
-  - **ゲージ自由度**（同値な表現がある＝最適化としては冗長性）
-- **幾何**:
-  - 微分形式で書くと、$\mathrm{d}$ と **Hodge 作用素**が本質になり、離散化は DEC（離散外微分）と相性が良い
-  - ゲージ不変性を壊さない設計（拘束保持・正則化）が、VGO 的には「良い座標系/良い計量の選択」に対応する
-
-## 追加テンプレ
+## Files
 
 - [app00-template](./app00-template)
 - [app01-harmonic-oscillator](./app01-harmonic-oscillator)
@@ -71,6 +58,3 @@ title: "Applications: Physics"
 - [app03-thermodynamics](./app03-thermodynamics)
 - [app04-fluid-mechanics](./app04-fluid-mechanics)
 - [app05-electromagnetism](./app05-electromagnetism)
-
-（今後追加候補: さらに具体的なモデル（粘弾性・乱流モデル・導体/媒質・連成））
-

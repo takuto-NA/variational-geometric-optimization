@@ -1,109 +1,272 @@
 ---
-title: "Physics: Harmonic Oscillator (Variational & Hamiltonian)"
+title: "Physics: Harmonic Oscillator (Variational to pH and Optimization)"
 ---
 
-## 1. Single DOF Harmonic Oscillator (Conservative)
+## Responsibility
 
-### Variational Formulation (Lagrangian)
-解析力学の視点では、運動は作用積分（Action Functional）の停留点として記述される。
-簡単のため質量 $m=1$ とし、バネ定数を $k=\omega^2$ （$\omega$ は固有角振動数）と置く。
-位置 $q(t)$ と速度 $\dot{q}(t)$ に対して Lagrangian $L$ を定義する。
+このページの責務は、連続体力学を起点にして、変分原理・FEM・port-Hamiltonian・時間積分・安定条件・最適化を一本の数式列でつなぐことである。
 
-$$
-L(q, \dot{q}) = T(\dot{q}) - V(q) = \frac{1}{2}\dot{q}^2 - \frac{1}{2}\omega^2 q^2
-$$
+## Position In Unified Flow
 
-作用積分 $S[q]$ は以下の時間積分で与えられる。
+この章は基準章であり、`app02` 以降は本章の各ブロック（拘束、散逸、流体、電磁気）を個別に拡張する。
 
-$$
-S[q] = \int_{t_0}^{t_1} L(q, \dot{q}) \, dt = \int_{t_0}^{t_1} \left( \frac{1}{2}\dot{q}^2 - \frac{1}{2}\omega^2 q^2 \right) dt
-$$
+## Symbol Dictionary
 
-Hamilton の原理（最小作用の原理）$\delta S = 0$ より、Euler-Lagrange 方程式が得られる。
+- 連続体変位場: $u(x,t)\in\mathbb{R}^d$
+- 離散自由度: $q(t)\in\mathbb{R}^n$, 共役運動量: $p(t)\in\mathbb{R}^n$
+- 質量行列: $M\succ 0$, 減衰行列: $C\succeq 0$, 剛性行列: $K\succeq 0$
+- 弾性テンソル: $\mathbb{C}$（減衰行列 $C$ と区別）
+- ハミルトニアン: $H(q,p)$, 構造行列: $J=-J^\top$, 散逸行列: $R=R^\top\succeq 0$
 
-$$
-\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{q}}\right) - \frac{\partial L}{\partial q} = 0 \implies \ddot{q} + \omega^2 q = 0
-$$
+## 0. Continuous Field As Action
 
-### Geometric Formulation (Hamiltonian)
-Legendre 変換 $p = \frac{\partial L}{\partial \dot{q}} = \dot{q}$ により Hamiltonian $H$ を導入すると、幾何学的な構造が明確になる。
+前提条件: 小変形の線形弾性体を想定する。
 
 $$
-H(q,p) = p\dot{q} - L = \frac{1}{2}p^2 + \frac{1}{2}\omega^2 q^2
+u=u(x,t),\qquad x\in\Omega\subset\mathbb{R}^d
 $$
 
-シンプレクティック形式（Poisson 括弧）による発展方程式：
-
 $$
-\begin{pmatrix}\dot q\\ \dot p\end{pmatrix}
-= J \nabla H 
-= \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix} \begin{pmatrix} \omega^2 q \\ p \end{pmatrix}
+T=\frac{1}{2}\rho |\dot{u}|^2,\qquad
+\varepsilon(u)=\frac{1}{2}\left(\nabla u+\nabla u^\top\right),\qquad
+W(\varepsilon)=\frac{1}{2}\varepsilon:\mathbb{C}:\varepsilon
 $$
 
----
-
-## 2. Damped Harmonic Oscillator (Dissipative)
-
-### Variational Formulation (Lagrange-d'Alembert)
-散逸系（非保存系）の場合、単純な作用積分の最小化では記述できないが、Lagrange-d'Alembert の原理（積分形式）を用いるときれいに記述できる。
-仮想仕事 $\delta W$ を導入し、変分原理を拡張する。
-
 $$
-\delta \int_{t_0}^{t_1} L(q, \dot{q}) \, dt + \int_{t_0}^{t_1} \delta W \, dt = 0
-$$
-
-ここで、粘性抵抗による仮想仕事は $\delta W = -\gamma \dot{q} \delta q$ と表される。これを展開すると：
-
-$$
-\int_{t_0}^{t_1} \left( \frac{\partial L}{\partial q} \delta q + \frac{\partial L}{\partial \dot{q}} \delta \dot{q} - \gamma \dot{q} \delta q \right) dt = 0
+S[u]
+:=
+\int_{t_0}^{t_1}
+\left(
+\int_\Omega
+\left(
+\frac{1}{2}\rho |\dot{u}|^2 - W(\varepsilon(u))
+\right)d\Omega
++
+\int_\Omega b\cdot u\,d\Omega
++
+\int_{\Gamma_t}\tau\cdot u\,d\Gamma
+\right)dt
 $$
 
-部分積分により $\delta \dot{q}$ を処理すると、以下の運動方程式が導かれる。
-
 $$
-\frac{d}{dt}\left(\frac{\partial L}{\partial \dot{q}}\right) - \frac{\partial L}{\partial q} = -\gamma \dot{q} \implies \ddot{q} + \gamma \dot{q} + \omega^2 q = 0
+\delta S[u]=0
 $$
 
-### Geometric Formulation (Dissipative Metric)
-この散逸構造は、幾何学的には計量 $G$ を用いて記述される。
+## 1. First Variation To Weak Form
+
+前提条件: 許容変分 $v=\delta u$ は境界条件を満たす。
 
 $$
-\dot{x} = (J - G)\nabla H, \quad 
-G = \begin{pmatrix} 0 & 0 \\ 0 & \gamma \end{pmatrix}
+\int_\Omega \rho \ddot{u}\cdot v\,d\Omega
++
+\int_\Omega \sigma(u):\varepsilon(v)\,d\Omega
+=
+\int_\Omega b\cdot v\,d\Omega
++
+\int_{\Gamma_t}\tau\cdot v\,d\Gamma,
+\qquad \forall v
 $$
 
-積分形式での「仮想仕事項」が、幾何学的形式での「散逸計量 $G$」に対応している。
-
----
-
-## 3. Two-DOF Coupled Oscillator
-
-### Variational Formulation
-2自由度系 $q = (q_1, q_2)$ の場合も、作用積分 $S$ はスカラー量として簡潔に書ける。
-
 $$
-S[q] = \int_{t_0}^{t_1} \left[ \underbrace{\frac{1}{2}(\dot{q}_1^2 + \dot{q}_2^2)}_{T} - \underbrace{\left( \frac{1}{2}k_1 q_1^2 + \frac{1}{2}k_2 q_2^2 + \frac{1}{2}k_{12}(q_1 - q_2)^2 \right)}_{V} \right] dt
+\sigma(u)=\frac{\partial W}{\partial \varepsilon}(u)=\mathbb{C}:\varepsilon(u)
 $$
 
-変分 $\delta S = 0$ をとることで、連成された運動方程式が一挙に導かれる。解析力学的な記述の利点は、自由度が増えても $L$ (スカラ) の定義を変えるだけで済む点にある。
+## 2. FEM As Finite-Dimensional Projection
 
-### Geometric Formulation
-幾何学的には、状態空間が4次元になり、ブロック行列による構造を持つ。
-
-$$
-\dot{x} = (J_4 - G_4)\nabla H
-$$
-
----
-
-## 4. Vibration Control (Optimal Control View)
-
-### Variational Formulation (Objective Functional)
-制振制御は、ある評価汎関数 $J_{cost}$ の最小化問題として定式化できる（最適制御）。
+前提条件: 空間のみ離散化し、時間は連続のまま残す。
 
 $$
-J_{cost} = \int_{0}^{\infty} \left( q^T Q q + \dot{q}^T R \dot{q} + u^T S u \right) dt
+u(x,t)\approx N(x)q(t),\qquad v(x)=N(x)\delta q
 $$
 
-これを最小化する制御入力 $u(t)$ を求めることは、変分法における Euler-Lagrange 方程式（あるいは Hamiltonian 系の随伴方程式）を解くことに帰着する。
-幾何学的には、この最適制御によって閉ループ系に「望ましい散逸構造 $G_{opt}$」が埋め込まれると解釈できる。
+$$
+M=\int_\Omega \rho N^\top N\,d\Omega,\qquad
+B=\nabla_s N,\qquad
+K=\int_\Omega B^\top \mathbb{C}B\,d\Omega
+$$
+
+$$
+f(t)=\int_\Omega N^\top b\,d\Omega+\int_{\Gamma_t}N^\top \tau\,d\Gamma
+$$
+
+$$
+M\ddot{q}+Kq=f(t)
+$$
+
+## 3. Dissipation In Same Variational Frame
+
+前提条件: 線形粘性減衰を Rayleigh 散逸関数で与える。
+
+$$
+\mathcal{R}(\dot{q})=\frac{1}{2}\dot{q}^\top C\dot{q}
+$$
+
+$$
+M\ddot{q}+C\dot{q}+Kq=f(t)
+$$
+
+## 4. Discrete Hamiltonian
+
+前提条件: $M$ は正則。
+
+$$
+p:=\frac{\partial L}{\partial \dot{q}}=M\dot{q}
+$$
+
+$$
+H(q,p)=\frac{1}{2}p^\top M^{-1}p+\frac{1}{2}q^\top Kq
+$$
+
+## 5. Hamiltonian Form (Conservative Part)
+
+前提条件: まず保存系（$C=0$）を考える。
+
+$$
+\dot{q}=M^{-1}p,\qquad
+\dot{p}=-Kq+f(t)
+$$
+
+$$
+z=
+\begin{pmatrix}
+q\\
+p
+\end{pmatrix},
+\qquad
+\dot{z}=J\nabla H(z)+Gu
+$$
+
+$$
+J=
+\begin{pmatrix}
+0&I\\
+-I&0
+\end{pmatrix},
+\qquad
+G=
+\begin{pmatrix}
+0\\
+I
+\end{pmatrix},
+\qquad
+u=f(t)
+$$
+
+## 6. Port-Hamiltonian Form (With Dissipation)
+
+前提条件: $C\succeq 0$ を満たす受動的減衰を導入する。
+
+$$
+\dot{z}=(J-R)\nabla H(z)+Gu
+$$
+
+$$
+R=
+\begin{pmatrix}
+0&0\\
+0&C
+\end{pmatrix},
+\qquad
+R\succeq 0
+$$
+
+$$
+y=G^\top \nabla H(z),\qquad
+\dot{H}=-(\nabla H)^\top R\nabla H+y^\top u
+$$
+
+## 7. Time Discretization (Explicit Central Difference)
+
+前提条件: 線形系を時刻 $t_n=n\Delta t$ で離散化する。
+
+$$
+\ddot{q}_n\approx \frac{q_{n+1}-2q_n+q_{n-1}}{\Delta t^2},\qquad
+\dot{q}_n\approx \frac{q_{n+1}-q_{n-1}}{2\Delta t}
+$$
+
+$$
+\left(\frac{1}{\Delta t^2}M+\frac{1}{2\Delta t}C\right)q_{n+1}
+=
+f_n
+-
+\left(K-\frac{2}{\Delta t^2}M\right)q_n
+-
+\left(\frac{1}{\Delta t^2}M-\frac{1}{2\Delta t}C\right)q_{n-1}
+$$
+
+## 8. Why Mass Lumping Enables Explicit Update
+
+前提条件: 毎ステップで逆行列作用を高速に評価したい。
+
+$$
+M\to M_{\mathrm{lumped}}\approx \mathrm{diag}(m_1,\dots,m_n)
+$$
+
+## 9. Stability Condition From Spectrum
+
+前提条件: 無外力・無減衰の線形系 $M\ddot{q}+Kq=0$ を対象とする。
+
+$$
+K\phi=\lambda M\phi,\qquad
+\omega_i=\sqrt{\lambda_i}
+$$
+
+$$
+\Delta t\le \frac{2}{\omega_{\max}}
+=
+\frac{2}{\sqrt{\lambda_{\max}(M^{-1}K)}}
+$$
+
+## 10. Optimization Enters As Matrix Design
+
+前提条件: 設計変数 $\theta$ によって離散モデルの行列が変化する。
+
+$$
+M(\theta),\ C(\theta),\ K(\theta)
+$$
+
+$$
+\hat{q}(\omega)=
+\left(K(\theta)+i\omega C(\theta)-\omega^2M(\theta)\right)^{-1}
+\hat{f}(\omega)
+$$
+
+$$
+\min_\theta J(\theta),\qquad
+J(\theta)=\sup_{\omega\in\Omega_\omega}\left\|W\hat{q}(\omega)\right\|
+$$
+
+## 11. pH-Constrained Optimization (Passivity-Preserving)
+
+前提条件: 受動性を設計制約として課す。
+
+$$
+R(\theta)\succeq 0
+\Rightarrow
+\dot{H}=-(\nabla H)^\top R(\theta)\nabla H+y^\top u
+$$
+
+## 12. One-Line Chain
+
+$$
+\text{Action}
+\Rightarrow
+\text{Weak Form}
+\Rightarrow
+\text{FEM }(M,C,K)
+\Rightarrow
+\text{port-Hamiltonian}
+\Rightarrow
+\text{Time Integrator}
+\Rightarrow
+\text{Stability Bound}
+\Rightarrow
+\text{Optimization}
+$$
+
+## Notes
+
+- 変分原理は連続体モデルの一貫した導出規則を与える。
+- FEM は変分問題の有限次元射影として $M,C,K$ を生成する。
+- pH 形式はエネルギー収支を明示し、設計制約の形を与える。
+- 陽解法の安定限界は固有値問題で決まり、解析と設計が同じ線形代数に集約される。
